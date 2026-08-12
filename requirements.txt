@@ -1,0 +1,21 @@
+# Socle (déjà utilisé par l'orchestrateur)
+rapidfuzz
+
+# API — membre 2
+fastapi
+uvicorn[standard]
+python-multipart
+
+# Transcription — membre 2
+transformers
+
+# 2.13 échoue au chargement des DLL (WinError 1114) sur CPU Intel Comet Lake
+
+soundfile
+librosa
+# Versions figées : les builds récents plantent silencieusement
+# sur i7-10510U (Comet Lake). Ne pas mettre à jour sans tester.
+torch==2.5.1
+ctranslate2==4.4.0
+faster-whisper==1.0.3
+av==12.3.0

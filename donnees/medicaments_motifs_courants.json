@@ -1,0 +1,293 @@
+{
+  "avertissement": "Les posologies, contre-indications et critères d'orientation de ce document proviennent de référentiels pharmacologiques généraux (non de la LNMPE, qui ne couvre que la disponibilité des médicaments par niveau de structure de soins). Ce document est un brouillon technique destiné à être relu et validé par un pharmacien ou un médecin avant toute utilisation clinique ou intégration dans un outil de dispensation/triage.",
+  "medicaments": [
+    {
+      "code": "PARA",
+      "principe_actif": "Paracétamol",
+      "forme": "Comprimé 500mg, sirop 125mg/5ml, injectable 1g",
+      "indication": "Douleur légère à modérée, fièvre",
+      "motifs": ["cephalee", "fievre_palu", "abdominal"],
+      "posologie": {
+        "moins de 5 ans": "10-15 mg/kg par prise, toutes les 6h (max 4 prises/j) - sirop",
+        "5 a 15 ans": "10-15 mg/kg par prise, toutes les 6h (max 4 prises/j)",
+        "15 a 60 ans": "500 mg à 1 g par prise, toutes les 6h (max 4 g/j)",
+        "plus de 60 ans": "500 mg par prise, toutes les 6-8h (max 3 g/j, prudence fonction hépatique/rénale)"
+      },
+      "contre_indications": ["Insuffisance hépatique sévère", "Allergie au paracétamol"],
+      "duree_max_jours": 3,
+      "conseils": ["Ne pas associer à d'autres médicaments contenant du paracétamol", "S'hydrater suffisamment"],
+      "orienter_si": ["Fièvre > 3 jours", "Douleur intense ou inhabituelle", "Signes de gravité (raideur de nuque, convulsions, altération de conscience)"],
+      "source": {
+        "titre": "Liste Nationale des Médicaments et Produits Essentiels du Sénégal (LNMPE) - Révision 2022",
+        "editeur": "Agence Sénégalaise de Réglementation Pharmaceutique (ARP) / MSAS",
+        "annee": 2022,
+        "section": "III-1 Antalgiques non opioïdes/antipyrétiques",
+        "url": "https://arp.sn/wp-content/uploads/2024/03/LNMPE-REVISION-2022_131123.pdf",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "brouillon",
+        "par": "",
+        "qualite": "",
+        "date": "",
+        "commentaire": "Présence du médicament dans la LNMPE confirmée par la source officielle. Posologie issue de référentiels pharmacologiques standards (non vérifiée dans la LNMPE, qui ne contient pas de posologie). Nécessite relecture par un pharmacien/médecin avant validation."
+      }
+    },
+    {
+      "code": "IBU",
+      "principe_actif": "Ibuprofène",
+      "forme": "Comprimé 400mg, sirop 100mg/5ml",
+      "indication": "Douleur modérée, inflammation, fièvre",
+      "motifs": ["cephalee", "abdominal"],
+      "posologie": {
+        "moins de 5 ans": "5-10 mg/kg par prise, toutes les 6-8h (à éviter avant 3 mois, sirop uniquement)",
+        "5 a 15 ans": "5-10 mg/kg par prise, toutes les 6-8h (max 40 mg/kg/j)",
+        "15 a 60 ans": "400 mg par prise, toutes les 6-8h (max 1200 mg/j sans avis médical)",
+        "plus de 60 ans": "Prudence, préférer paracétamol ; si utilisé, 200-400 mg par prise max, durée la plus courte possible"
+      },
+      "contre_indications": ["Ulcère gastroduodénal évolutif", "Insuffisance rénale ou hépatique sévère", "Grossesse (3e trimestre)", "Allergie aux AINS", "Asthme sévère sensible à l'aspirine"],
+      "duree_max_jours": 3,
+      "conseils": ["Prendre au cours d'un repas", "Éviter en cas de déshydratation", "Ne pas associer à d'autres AINS"],
+      "orienter_si": ["Douleur abdominale associée", "Sang dans les selles ou vomissements", "Douleur persistant plus de 3 jours"],
+      "source": {
+        "titre": "Liste Nationale des Médicaments et Produits Essentiels du Sénégal (LNMPE) - Révision 2022",
+        "editeur": "Agence Sénégalaise de Réglementation Pharmaceutique (ARP) / MSAS",
+        "annee": 2022,
+        "section": "III-1 Antalgiques non opioïdes/antipyrétiques, anti-inflammatoires",
+        "url": "https://arp.sn/wp-content/uploads/2024/03/LNMPE-REVISION-2022_131123.pdf",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "brouillon",
+        "par": "",
+        "qualite": "",
+        "date": "",
+        "commentaire": "Présence confirmée dans la LNMPE. Posologie et contre-indications issues de référentiels pharmacologiques généraux, à faire valider par un professionnel de santé."
+      }
+    },
+    {
+      "code": "CARBOC",
+      "principe_actif": "Carbocystéine",
+      "forme": "Sirop 2% et 5%",
+      "indication": "Toux grasse, encombrement bronchique",
+      "motifs": ["respiratoire"],
+      "posologie": {
+        "moins de 5 ans": "Sirop 2% : selon poids, avis pharmacien/médecin recommandé avant 2 ans",
+        "5 a 15 ans": "Sirop 2% : 1 cuillère à café, 3 fois/jour",
+        "15 a 60 ans": "Sirop 5% : 1 cuillère à soupe, 3 fois/jour",
+        "plus de 60 ans": "Sirop 5% : 1 cuillère à soupe, 2 à 3 fois/jour"
+      },
+      "contre_indications": ["Antécédent d'ulcère gastroduodénal", "Enfant de moins de 2 ans (fluidifiants bronchiques déconseillés)"],
+      "duree_max_jours": 5,
+      "conseils": ["Bien s'hydrater pour favoriser la fluidification", "Ne pas associer à un antitussif (effet contradictoire)"],
+      "orienter_si": ["Toux > 2 semaines", "Fièvre associée persistante", "Difficultés respiratoires", "Crachats sanglants"],
+      "source": {
+        "titre": "Liste Nationale des Médicaments et Produits Essentiels du Sénégal (LNMPE) - Révision 2022",
+        "editeur": "Agence Sénégalaise de Réglementation Pharmaceutique (ARP) / MSAS",
+        "annee": 2022,
+        "section": "XIV-1 Antitussifs et fluidifiants",
+        "url": "https://arp.sn/wp-content/uploads/2024/03/LNMPE-REVISION-2022_131123.pdf",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "brouillon",
+        "par": "",
+        "qualite": "",
+        "date": "",
+        "commentaire": "Présence confirmée dans la LNMPE. Posologie standard générale, à faire valider par un professionnel de santé."
+      }
+    },
+    {
+      "code": "DEXTRO",
+      "principe_actif": "Dextrométhorphane",
+      "forme": "Sirop 1,5mg/ml",
+      "indication": "Toux sèche irritative",
+      "motifs": ["respiratoire"],
+      "posologie": {
+        "moins de 5 ans": "Non recommandé sans avis médical",
+        "5 a 15 ans": "Selon poids et âge, avis pharmacien recommandé",
+        "15 a 60 ans": "15 mg (10 ml), 3 à 4 fois/jour, max 4 prises/j",
+        "plus de 60 ans": "15 mg, 3 fois/jour max"
+      },
+      "contre_indications": ["Toux grasse/productive", "Asthme", "Insuffisance respiratoire", "Association aux IMAO", "Enfant de moins de 2 ans"],
+      "duree_max_jours": 5,
+      "conseils": ["Ne pas associer à un fluidifiant bronchique", "Éviter la conduite si somnolence"],
+      "orienter_si": ["Toux persistante > 2 semaines", "Fièvre élevée associée", "Essoufflement ou sifflements respiratoires"],
+      "source": {
+        "titre": "Liste Nationale des Médicaments et Produits Essentiels du Sénégal (LNMPE) - Révision 2022",
+        "editeur": "Agence Sénégalaise de Réglementation Pharmaceutique (ARP) / MSAS",
+        "annee": 2022,
+        "section": "XIV-1 Antitussifs et fluidifiants",
+        "url": "https://arp.sn/wp-content/uploads/2024/03/LNMPE-REVISION-2022_131123.pdf",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "brouillon",
+        "par": "",
+        "qualite": "",
+        "date": "",
+        "commentaire": "Présence confirmée dans la LNMPE. Posologie standard générale, à faire valider par un professionnel de santé."
+      }
+    },
+    {
+      "code": "SPASFON",
+      "principe_actif": "Phloroglucinol + Triméthylphloroglucinol",
+      "forme": "Comprimé 80mg/80mg, injectable 40mg/4ml",
+      "indication": "Douleurs spasmodiques abdominales (coliques)",
+      "motifs": ["abdominal"],
+      "posologie": {
+        "moins de 5 ans": "Non recommandé sans avis médical",
+        "5 a 15 ans": "Avis médical recommandé, formes adaptées à l'enfant",
+        "15 a 60 ans": "1 à 2 comprimés, 3 fois/jour",
+        "plus de 60 ans": "1 à 2 comprimés, 3 fois/jour"
+      },
+      "contre_indications": ["Allergie au phloroglucinol", "Douleur abdominale de cause inconnue non évaluée médicalement"],
+      "duree_max_jours": 3,
+      "conseils": ["Ne masque pas une urgence abdominale : consulter si douleur intense ou inhabituelle"],
+      "orienter_si": ["Douleur abdominale intense ou en coup de poignard", "Défense abdominale", "Fièvre associée", "Vomissements répétés", "Absence d'amélioration en 48h"],
+      "source": {
+        "titre": "Liste Nationale des Médicaments et Produits Essentiels du Sénégal (LNMPE) - Révision 2022",
+        "editeur": "Agence Sénégalaise de Réglementation Pharmaceutique (ARP) / MSAS",
+        "annee": 2022,
+        "section": "XIII-4 Anti-spasmodiques",
+        "url": "https://arp.sn/wp-content/uploads/2024/03/LNMPE-REVISION-2022_131123.pdf",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "brouillon",
+        "par": "",
+        "qualite": "",
+        "date": "",
+        "commentaire": "Présence confirmée dans la LNMPE. Posologie standard générale, à faire valider par un professionnel de santé."
+      }
+    },
+    {
+      "code": "MAALOX",
+      "principe_actif": "Sels d'aluminium et de magnésium",
+      "forme": "Comprimé 400mg/400mg",
+      "indication": "Brûlures d'estomac, douleurs épigastriques, reflux",
+      "motifs": ["abdominal"],
+      "posologie": {
+        "moins de 5 ans": "Non recommandé",
+        "5 a 15 ans": "Avis médical recommandé",
+        "15 a 60 ans": "1 à 2 comprimés à croquer, après les repas et au coucher (max 6/j)",
+        "plus de 60 ans": "1 à 2 comprimés, après les repas (max 6/j)"
+      },
+      "contre_indications": ["Insuffisance rénale sévère", "Hypophosphorémie"],
+      "duree_max_jours": 7,
+      "conseils": ["Espacer de 2h la prise d'autres médicaments (interactions d'absorption)", "Ne pas prendre à jeun"],
+      "orienter_si": ["Douleur persistant > 1 semaine", "Perte de poids associée", "Vomissements ou selles noires (méléna)", "Difficulté à avaler"],
+      "source": {
+        "titre": "Liste Nationale des Médicaments et Produits Essentiels du Sénégal (LNMPE) - Révision 2022",
+        "editeur": "Agence Sénégalaise de Réglementation Pharmaceutique (ARP) / MSAS",
+        "annee": 2022,
+        "section": "XIII-1 Anti-acides et autres anti-ulcéreux",
+        "url": "https://arp.sn/wp-content/uploads/2024/03/LNMPE-REVISION-2022_131123.pdf",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "brouillon",
+        "par": "",
+        "qualite": "",
+        "date": "",
+        "commentaire": "Présence confirmée dans la LNMPE. Posologie standard générale, à faire valider par un professionnel de santé."
+      }
+    },
+    {
+      "code": "SRO",
+      "principe_actif": "Sels de Réhydratation Orale (faible osmolarité)",
+      "forme": "Poudre en sachet (Glucose 13,5g/L, NaCl 2,6g/L, KCl 1,5g/L, Citrate trisodique 2,9g/L)",
+      "indication": "Diarrhée, prévention/traitement de la déshydratation",
+      "motifs": ["diarrhee", "abdominal"],
+      "posologie": {
+        "moins de 5 ans": "50-100 ml après chaque selle liquide (moins de 2 ans) ; 100-200 ml (2-5 ans), à volonté",
+        "5 a 15 ans": "200-400 ml après chaque selle liquide, à volonté",
+        "15 a 60 ans": "Autant que toléré après chaque selle liquide, jusqu'à disparition de la soif",
+        "plus de 60 ans": "Autant que toléré après chaque selle liquide, surveillance renforcée de l'hydratation"
+      },
+      "contre_indications": ["Vomissements incoercibles empêchant la prise orale (orienter vers réhydratation IV)"],
+      "duree_max_jours": 7,
+      "conseils": ["Diluer un sachet dans la quantité d'eau propre indiquée sur l'emballage", "Reconstituer une nouvelle solution toutes les 24h", "Poursuivre l'alimentation habituelle"],
+      "orienter_si": ["Signes de déshydratation sévère (yeux creux, pli cutané persistant, léthargie)", "Diarrhée > 3 jours", "Sang dans les selles", "Vomissements empêchant toute prise orale", "Nourrisson < 6 mois"],
+      "source": {
+        "titre": "Liste Nationale des Médicaments et Produits Essentiels du Sénégal (LNMPE) - Révision 2022",
+        "editeur": "Agence Sénégalaise de Réglementation Pharmaceutique (ARP) / MSAS",
+        "annee": 2022,
+        "section": "XIII-6 Sels de réhydratation",
+        "url": "https://arp.sn/wp-content/uploads/2024/03/LNMPE-REVISION-2022_131123.pdf",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "brouillon",
+        "par": "",
+        "qualite": "",
+        "date": "",
+        "commentaire": "Composition et présence dans la LNMPE confirmées par la source officielle (colonne 3 du document). Posologie alignée sur les recommandations OMS de prise en charge de la diarrhée, à faire valider par un professionnel de santé."
+      }
+    },
+    {
+      "code": "ZINC",
+      "principe_actif": "Zinc (sulfate)",
+      "forme": "Comprimé dispersible ou sirop 20mg",
+      "indication": "Diarrhée aiguë (traitement adjuvant, réduit durée et sévérité)",
+      "motifs": ["diarrhee"],
+      "posologie": {
+        "moins de 5 ans": "10 mg/j (< 6 mois) ou 20 mg/j (6 mois-5 ans), pendant 10 à 14 jours",
+        "5 a 15 ans": "20 mg/j, pendant 10 à 14 jours (usage principalement pédiatrique)",
+        "15 a 60 ans": "Usage principalement pédiatrique - avis médical si utilisé chez l'adulte",
+        "plus de 60 ans": "Usage principalement pédiatrique - avis médical si utilisé chez l'adulte"
+      },
+      "contre_indications": ["Allergie au zinc"],
+      "duree_max_jours": 14,
+      "conseils": ["Toujours associer aux SRO", "Poursuivre le traitement même après l'arrêt de la diarrhée pour compléter les 10-14 jours"],
+      "orienter_si": ["Diarrhée > 3 jours", "Signes de déshydratation", "Sang dans les selles", "Fièvre élevée associée"],
+      "source": {
+        "titre": "Liste Nationale des Médicaments et Produits Essentiels du Sénégal (LNMPE) - Révision 2022",
+        "editeur": "Agence Sénégalaise de Réglementation Pharmaceutique (ARP) / MSAS",
+        "annee": 2022,
+        "section": "XIII-6 Sels de réhydratation (Zinc)",
+        "url": "https://arp.sn/wp-content/uploads/2024/03/LNMPE-REVISION-2022_131123.pdf",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "brouillon",
+        "par": "",
+        "qualite": "",
+        "date": "",
+        "commentaire": "Présence confirmée dans la LNMPE. Posologie alignée sur les recommandations OMS/UNICEF de prise en charge de la diarrhée infantile, à faire valider par un professionnel de santé."
+      }
+    },
+    {
+      "code": "METRO",
+      "principe_actif": "Métronidazole",
+      "forme": "Comprimé 250mg et 500mg, suspension buvable 200mg/5ml",
+      "indication": "Diarrhée d'origine parasitaire ou infectieuse (amibiase, giardiase), certaines douleurs abdominales infectieuses",
+      "motifs": ["diarrhee", "abdominal"],
+      "posologie": {
+        "moins de 5 ans": "10 mg/kg, 3 fois/jour (suspension), sur prescription uniquement",
+        "5 a 15 ans": "10 mg/kg, 3 fois/jour, sur prescription uniquement",
+        "15 a 60 ans": "500 mg, 3 fois/jour, sur prescription uniquement (durée selon indication, 5-10 jours)",
+        "plus de 60 ans": "500 mg, 2 à 3 fois/jour selon fonction rénale/hépatique, sur prescription uniquement"
+      },
+      "contre_indications": ["1er trimestre de grossesse", "Allaitement (interrompre pendant le traitement)", "Consommation d'alcool (effet antabuse)", "Antécédent d'atteinte neurologique"],
+      "duree_max_jours": 10,
+      "conseils": ["Ne jamais consommer d'alcool pendant le traitement et 48h après", "Traitement à ne débuter que sur avis/prescription médicale, pas en automédication"],
+      "orienter_si": ["Avant toute prise (nécessite un diagnostic médical préalable)", "Diarrhée sanglante", "Fièvre élevée", "Déshydratation", "Absence d'amélioration après avis médical initial"],
+      "source": {
+        "titre": "Liste Nationale des Médicaments et Produits Essentiels du Sénégal (LNMPE) - Révision 2022",
+        "editeur": "Agence Sénégalaise de Réglementation Pharmaceutique (ARP) / MSAS",
+        "annee": 2022,
+        "section": "I-4-2 Antiamibiens",
+        "url": "https://arp.sn/wp-content/uploads/2024/03/LNMPE-REVISION-2022_131123.pdf",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "brouillon",
+        "par": "",
+        "qualite": "",
+        "date": "",
+        "commentaire": "Présence confirmée dans la LNMPE. Antibiotique nécessitant un diagnostic et une prescription médicale préalables : à ne pas intégrer dans un parcours d'automédication sans validation stricte par un médecin/pharmacien."
+      }
+    }
+  ]
+}

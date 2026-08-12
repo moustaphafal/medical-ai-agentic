@@ -1,0 +1,56 @@
+{
+  "_lisez_moi": {
+    "objet": "Référence de protocole citée dans la trace de décision, pour chaque motif.",
+    "role": "Remplace le RAG vectoriel. Un dictionnaire produit le même effet devant le jury pour une fraction du temps.",
+    "regle_droits": "Le champ 'conduite_resumee' doit être rédigé DANS VOS PROPRES MOTS, en 2 ou 3 phrases. Ne recopiez jamais le texte du protocole : citez la référence et renvoyez au document.",
+    "volume_cible": "5 entrées, une par motif."
+  },
+
+  "protocoles": {
+    "fievre_palu": {
+      "titre": "",
+      "editeur": "",
+      "annee": null,
+      "section": "",
+      "url": "",
+      "consulte_le": "",
+      "conduite_resumee": ""
+    },
+    "diarrhee": {
+      "titre": "",
+      "editeur": "",
+      "annee": null,
+      "section": "",
+      "url": "",
+      "consulte_le": "",
+      "conduite_resumee": ""
+    },
+    "respiratoire": {
+      "titre": "",
+      "editeur": "",
+      "annee": null,
+      "section": "",
+      "url": "",
+      "consulte_le": "",
+      "conduite_resumee": ""
+    },
+    "abdominal": {
+      "titre": "",
+      "editeur": "",
+      "annee": null,
+      "section": "",
+      "url": "",
+      "consulte_le": "",
+      "conduite_resumee": ""
+    },
+    "cephalee": {
+      "titre": "",
+      "editeur": "",
+      "annee": null,
+      "section": "",
+      "url": "",
+      "consulte_le": "",
+      "conduite_resumee": ""
+    }
+  }
+}

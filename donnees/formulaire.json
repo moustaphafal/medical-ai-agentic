@@ -1,0 +1,76 @@
+{
+  "_lisez_moi": {
+    "objet": "Formulaire thérapeutique fermé. Le modèle de langage ne rédige jamais un médicament ni une posologie : il sélectionne une entrée de cette liste.",
+    "regle": "Toute entrée dont validation.statut != 'valide' est refusée par le système en MODE_STRICT.",
+    "volume_cible": "6 à 8 entrées suffisent pour couvrir les 5 motifs.",
+    "avertissement": "Les deux entrées ci-dessous sont des EXEMPLES DE STRUCTURE. Les champs source et posologie doivent être remplacés par ce que vous lisez réellement dans le document que vous citez. Ne conservez aucune valeur que vous n'avez pas vérifiée vous-même."
+  },
+
+  "entrees": [
+    {
+      "code": "PARA",
+      "principe_actif": "",
+      "forme": "",
+      "indication": "",
+      "motifs": ["cephalee", "fievre_palu", "respiratoire", "abdominal"],
+      "posologie": {
+        "moins de 5 ans": "",
+        "5 a 15 ans": "",
+        "15 a 60 ans": "",
+        "plus de 60 ans": ""
+      },
+      "contre_indications": [],
+      "duree_max_jours": 3,
+      "conseils": [],
+      "orienter_si": [],
+      "source": {
+        "titre": "",
+        "editeur": "",
+        "annee": null,
+        "section": "",
+        "url": "",
+        "consulte_le": ""
+      },
+      "validation": {
+        "statut": "brouillon",
+        "par": "",
+        "qualite": "",
+        "date": "",
+        "commentaire": ""
+      }
+    },
+
+    {
+      "code": "SRO",
+      "principe_actif": "",
+      "forme": "",
+      "indication": "",
+      "motifs": ["diarrhee"],
+      "posologie": {
+        "moins de 5 ans": "",
+        "5 a 15 ans": "",
+        "15 a 60 ans": "",
+        "plus de 60 ans": ""
+      },
+      "contre_indications": [],
+      "duree_max_jours": 2,
+      "conseils": [],
+      "orienter_si": [],
+      "source": {
+        "titre": "",
+        "editeur": "",
+        "annee": null,
+        "section": "",
+        "url": "",
+        "consulte_le": ""
+      },
+      "validation": {
+        "statut": "brouillon",
+        "par": "",
+        "qualite": "",
+        "date": "",
+        "commentaire": ""
+      }
+    }
+  ]
+}

@@ -175,3 +175,50 @@ def extraire_par_llm(champ, texte: str) -> str | None:
         {"valeur": "<option exacte ou null>"}
     """
     return None
+
+# Une durée n'est déduite que si elle est explicitement exprimée :
+# un nombre suivi d'une unité de temps.
+_MOTIF_DUREE = re.compile(
+    r"\b(\d{1,3})\s*(jour|jours|semaine|semaines|mois|fan|bes|ayubes)\b"
+)
+
+
+def extraire_duree_explicite(texte: str) -> int | None:
+    t = phonetiser(texte)
+    m = _MOTIF_DUREE.search(t)
+    if m:
+        n = int(m.group(1))
+        unite = m.group(2)
+        if unite.startswith(("semaine", "ayubes")):
+            n *= 7
+        elif unite.startswith("mois"):
+            n *= 30
+        return n
+    # Formes wolof et françaises en toutes lettres, avec unité obligatoire.
+    for mot, val in {"benn": 1, "naar": 2, "nett": 3, "nent": 4, "juroom": 5,
+                     "un": 1, "deux": 2, "trois": 3, "quatre": 4, "cinq": 5}.items():
+        if re.search(rf"\b{mot}\s+(jour|jours|fan|bes)\b", t):
+            return val
+    if re.search(r"\b(aujourd hui|tey)\b", t):
+        return 0
+    if re.search(r"\b(hier|demb)\b", t):
+        return 1
+    return None
+
+
+def extraire_tout(texte: str, dossier: dict, champs) -> dict:
+    """Déduction opportuniste, volontairement conservatrice.
+    N'écrase jamais un champ existant et exige un indice explicite."""
+    trouves = {}
+
+    if "duree_jours" not in dossier:
+        d = extraire_duree_explicite(texte)
+        if d is not None:
+            trouves["duree_jours"] = d
+
+    if "motif_principal" not in dossier:
+        m = extraire_motif(texte)
+        if m is not None:
+            trouves["motif_principal"] = m
+
+    return trouves

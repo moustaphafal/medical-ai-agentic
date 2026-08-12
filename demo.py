@@ -73,6 +73,18 @@ CAS = [
                      "deedeet", "waaw"],
         "attendu": "automedication_encadree",
     },
+    {
+        "nom": "Réponses incompréhensibles sur signe d'alerte — attendu : orientation",
+        "reponses": ["j'ai mal a la tete", "15 a 60 ans", "homme", "2", "non",
+                     "xxxx", "yyyy", "zzzz"],
+        "attendu": "orientation",
+    },
+    {
+        "nom": "Bruit sur la question dyspnée — attendu : orientation",
+        "reponses": ["je tousse", "15 a 60 ans", "homme", "2", "non",
+                     "?????", "?????", "?????"],
+        "attendu": "orientation",
+    },
 ]
 
 

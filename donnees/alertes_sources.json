@@ -1,0 +1,58 @@
+{
+  "_lisez_moi": {
+    "objet": "Signes d'alerte. Règles déterministes évaluées à chaque tour, jamais confiées au modèle de langage.",
+    "correspondance": "Le champ 'code' doit correspondre exactement à un code présent dans alertes.py. Ce fichier documente et source les règles ; alertes.py les exécute.",
+    "volume_cible": "14 règles, soit celles déjà codées dans alertes.py.",
+    "conseil": "Les signes d'alerte sont largement universels : recomedicales.fr est une bonne source pour cette partie, contrairement aux posologies."
+  },
+
+  "regles": [
+    {
+      "code": "dyspnee",
+      "libelle": "Difficulté respiratoire",
+      "niveau": "urgent",
+      "motifs": ["fievre_palu", "respiratoire", "abdominal"],
+      "condition_lisible": "Le patient répond oui à la question sur la difficulté à respirer",
+      "justification": "",
+      "source": {
+        "titre": "",
+        "editeur": "",
+        "annee": null,
+        "section": "",
+        "url": "",
+        "consulte_le": ""
+      },
+      "validation": {
+        "statut": "brouillon",
+        "par": "",
+        "qualite": "",
+        "date": "",
+        "commentaire": ""
+      }
+    },
+
+    {
+      "code": "age_nourrisson",
+      "libelle": "Enfant de moins de 5 ans",
+      "niveau": "oriente",
+      "motifs": ["tous"],
+      "condition_lisible": "Tranche d'âge déclarée inférieure à 5 ans",
+      "justification": "",
+      "source": {
+        "titre": "",
+        "editeur": "",
+        "annee": null,
+        "section": "",
+        "url": "",
+        "consulte_le": ""
+      },
+      "validation": {
+        "statut": "brouillon",
+        "par": "",
+        "qualite": "",
+        "date": "",
+        "commentaire": ""
+      }
+    }
+  ]
+}

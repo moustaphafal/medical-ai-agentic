@@ -32,6 +32,24 @@ TERMINE = "termine"
 MAX_REPRISES = 2          # relances avant de passer au champ suivant
 MAX_TOURS = 25            # garde-fou contre les boucles infinies
 
+# Valeur explicite pour un champ que l'agent n'a pas réussi à comprendre.
+# Ne JAMAIS utiliser None : un None est lu comme "non" par les règles d'alerte,
+# ce qui reviendrait à conclure au bénin sur une information manquante.
+INCONNU = "inconnu"
+
+# Champs dont l'absence de réponse interdit toute conclusion bénigne.
+# Si l'un d'eux reste inconnu, l'entretien bascule en orientation.
+CHAMPS_CRITIQUES = {
+    "age_tranche",
+    "grossesse",
+    "dyspnee",
+    "conscience_alteree",
+    "saignement",
+    "douleur_thoracique",
+    "deshydratation",
+    "raideur_nuque",
+}
+
 
 @dataclass
 class Tour:
@@ -106,14 +124,31 @@ class Session:
             if self.reprises <= MAX_REPRISES:
                 return Tour(self._reformuler(champ), ANAMNESE,
                             champ.nom, champ.options)
-            # Trop d'échecs sur ce champ : on l'ignore et on continue.
-            self.dossier[champ.nom] = None
+
+            # Échec définitif sur ce champ. On le marque explicitement inconnu.
+            self.dossier[champ.nom] = INCONNU
             self.reprises = 0
+            self._journaliser("champ_inconnu", {"champ": champ.nom})
+
+            # Sur un champ critique, l'ignorer reviendrait à supposer une
+            # réponse négative. On oriente par précaution.
+            if champ.nom in CHAMPS_CRITIQUES:
+                return self._conclure_orientation(
+                    [],
+                    motif=f"Information manquante sur un signe d'alerte ({champ.nom})",
+                )
             return self._question_suivante()
 
         self.dossier[champ.nom] = valeur
         self.reprises = 0
         self._journaliser("champ_rempli", {"champ": champ.nom, "valeur": valeur})
+
+        # Le patient donne souvent plusieurs informations d'un coup.
+        # « j'ai mal à la tête depuis deux jours » remplit motif ET durée.
+        bonus = extraction.extraire_tout(texte, self.dossier, domaine.CHAMPS)
+        for nom, val in bonus.items():
+            self.dossier[nom] = val
+            self._journaliser("champ_deduit", {"champ": nom, "valeur": val})
 
         # Les alertes urgentes court-circuitent immédiatement l'entretien.
         urgentes = [a for a in alertes.evaluer(self.dossier)
@@ -128,6 +163,7 @@ class Session:
         if champ is None:
             return self._passer_en_confirmation()
         self.champ_courant = champ
+        self.reprises = 0
         question = champ.question_fr if self.langue == "fr" else champ.question_wo
         return Tour(question, ANAMNESE, champ.nom, champ.options)
 
@@ -215,6 +251,18 @@ class Session:
         return Tour(texte, TERMINE, conclusion=self.conclusion)
 
     def _conclure_benin(self) -> Tour:
+        # Dernier verrou : aucune conclusion bénigne si une information
+        # critique manque. Le système doit échouer du côté prudent.
+        manquants = [
+            nom for nom in CHAMPS_CRITIQUES
+            if self.dossier.get(nom) == INCONNU
+        ]
+        if manquants:
+            return self._conclure_orientation(
+                [],
+                motif="Informations manquantes : " + ", ".join(manquants),
+            )
+
         motif = self.dossier.get("motif_principal")
         age = self.dossier.get("age_tranche")
         options = formulaire.candidats(motif, age)
