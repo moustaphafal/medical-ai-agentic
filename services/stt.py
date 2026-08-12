@@ -55,22 +55,35 @@ def charger_audio(chemin: str):
 # --------------------------------------------------------------------------
 
 def charger_modeles():
-    global _whisper, _mms_modele, _mms_proc
+    """Ne charge plus rien au démarrage : chaque modèle est chargé
+    à sa première utilisation. Évite de saturer la mémoire."""
     if MODE_SIMULE:
         print("[STT] mode simulé — aucun modèle chargé")
-        return
+    else:
+        print("[STT] chargement paresseux activé")
 
-    from faster_whisper import WhisperModel
-    print("[STT] chargement du modèle français…")
-    _whisper = WhisperModel("small", device="cpu", compute_type="int8")
 
-    import torch
-    from transformers import AutoProcessor, Wav2Vec2ForCTC
-    print("[STT] chargement du modèle wolof…")
-    mid = "bilalfaye/wav2vec2-large-mms-1b-wolof"
-    _mms_proc = AutoProcessor.from_pretrained(mid)
-    _mms_modele = Wav2Vec2ForCTC.from_pretrained(mid).to("cpu").eval()
-    print("[STT] prêt")
+def _get_whisper():
+    global _whisper
+    if _whisper is None:
+        from faster_whisper import WhisperModel
+        print("[STT] chargement du modèle français…")
+        _whisper = WhisperModel("small", device="cpu", compute_type="int8")
+        print("[STT] français prêt")
+    return _whisper
+
+
+def _get_mms():
+    global _mms_modele, _mms_proc
+    if _mms_modele is None:
+        import torch
+        from transformers import AutoProcessor, Wav2Vec2ForCTC
+        print("[STT] chargement du modèle wolof…")
+        mid = "bilalfaye/wav2vec2-large-mms-1b-wolof"
+        _mms_proc = AutoProcessor.from_pretrained(mid)
+        _mms_modele = Wav2Vec2ForCTC.from_pretrained(mid).to("cpu").eval()
+        print("[STT] wolof prêt")
+    return _mms_modele, _mms_proc
 
 
 # --------------------------------------------------------------------------
@@ -78,17 +91,19 @@ def charger_modeles():
 # --------------------------------------------------------------------------
 
 def _transcrire_fr(chemin_wav: str) -> str:
-    segments, _ = _whisper.transcribe(chemin_wav, language="fr", beam_size=1)
+    modele = _get_whisper()
+    segments, _ = modele.transcribe(chemin_wav, language="fr", beam_size=1)
     return " ".join(s.text for s in segments).strip()
 
 
 def _transcrire_wo(chemin_wav: str) -> str:
     import torch
+    modele, proc = _get_mms()
     wav = charger_audio(chemin_wav)
-    x = _mms_proc(wav, sampling_rate=16000, return_tensors="pt")
+    x = proc(wav, sampling_rate=16000, return_tensors="pt")
     with torch.no_grad():
-        logits = _mms_modele(**x).logits
-    return _mms_proc.decode(logits.argmax(-1)[0]).strip()
+        logits = modele(**x).logits
+    return proc.decode(logits.argmax(-1)[0]).strip()
 
 
 def transcrire(chemin_audio: str, langue: str = "fr") -> str:
