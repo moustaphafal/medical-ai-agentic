@@ -1,0 +1,201 @@
+{
+  "avertissement": "Chaque signe d'alerte listé ici est associé à une source réellement consultée, avec URL vérifiable. Deux motifs disposent désormais de sources nationales sénégalaises officielles : la toux (PNT Sénégal) et le paludisme (PNLP/MSAS Sénégal). Les motifs céphalée, douleurs abdominales et diarrhée s'appuient sur des sources internationales/étrangères (HAS, OMS, AAFP), scientifiquement reconnues mais non sénégalaises, faute de protocole national public identifié pour ces motifs en soins primaires. Statut de validation : brouillon, à faire relire par un médecin sénégalais pour confirmer l'applicabilité locale et l'actualité des documents (notamment le document PNLP, daté de 2015).",
+  "signes_alerte": [
+    {
+      "motif": "cephalee",
+      "titre": "Céphalée",
+      "signes_alerte": [
+        "Céphalée brutale, maximale d'emblée en moins d'une heure ('coup de tonnerre') : évoque une hémorragie méningée jusqu'à preuve du contraire",
+        "Céphalée avec anomalie à l'examen neurologique (déficit focal, confusion, trouble de la conscience)",
+        "Céphalée avec fièvre et/ou syndrome méningé (en l'absence de cause générale bénigne évidente comme une virose ou une sinusite)",
+        "Céphalée récente inhabituelle, continue, d'intensité croissante sur plusieurs jours/semaines",
+        "Céphalée avec signes d'hypertension intracrânienne (vomissements en jet, œdème papillaire, troubles visuels)",
+        "Céphalée après un traumatisme crânien",
+        "Céphalée chez un patient de plus de 50 ans, nouvelle et inhabituelle",
+        "Absence d'amélioration malgré un traitement antalgique bien conduit (la réponse au traitement ne doit pas rassurer à tort)"
+      ],
+      "orientation": "Urgence si céphalée brutale/en coup de tonnerre, signes neurologiques ou syndrome méningé. Consultation médicale rapide pour les autres signes d'alerte.",
+      "sources": [
+        {
+          "titre": "Pertinence de l'imagerie en cas de céphalées de l'enfant - Fiche de bonnes pratiques",
+          "editeur": "Haute Autorité de Santé (HAS, France), en coopération avec le G4 (Conseil national de la radiologie)",
+          "annee": 2023,
+          "section": "Drapeaux rouges nécessitant une imagerie cérébrale",
+          "url": "https://www.has-sante.fr/upload/docs/application/pdf/2024-01/app480_fiche_pertinence_cephalee_mel.pdf",
+          "consulte_le": "2026-08-12",
+          "remarque": "Document français, initialement centré sur la céphalée de l'enfant, mais dont les critères de drapeaux rouges (SNOOP) sont repris de façon consensuelle dans la littérature médicale pour l'adulte également. Ce n'est pas une source sénégalaise."
+        }
+      ]
+    },
+    {
+      "motif": "respiratoire",
+      "titre": "Toux",
+      "signes_alerte": [
+        "Toux persistant plus de 3 semaines : critère national sénégalais de suspicion de tuberculose, à faire dépister systématiquement",
+        "Toux avec expectorations sanglantes (hémoptysie)",
+        "Toux avec fièvre persistante et amaigrissement (contexte évocateur de tuberculose)",
+        "Détresse respiratoire, cyanose, tirage",
+        "Chez l'enfant (< 5 ans) : tirage sous-costal, stridor au calme, respiration rapide selon l'âge, incapacité à boire ou à téter, léthargie ou inconscience, convulsions"
+      ],
+      "orientation": "Toux > 3 semaines → orientation systématique vers dépistage tuberculose (test GeneXpert disponible dans la LNMPE). Détresse respiratoire ou signe de danger chez l'enfant → urgence.",
+      "sources": [
+        {
+          "titre": "Programme National de Lutte contre la Tuberculose (PNT) - Site officiel",
+          "editeur": "Ministère de la Santé et de l'Action Sociale du Sénégal (MSAS)",
+          "annee": 2024,
+          "section": "Symptômes évocateurs de la tuberculose",
+          "url": "https://www.pnt.sn/",
+          "consulte_le": "2026-08-12",
+          "remarque": "Source nationale sénégalaise officielle. Le site indique une toux durant plus de trois semaines comme symptôme évocateur, éventuellement accompagnée de crachats sanglants."
+        },
+        {
+          "titre": "Integrated Management of Childhood Illness (IMCI) - Chart Booklet",
+          "editeur": "World Health Organization (OMS)",
+          "annee": 2014,
+          "section": "Cough or difficult breathing - Assess & classify / General danger signs",
+          "url": "https://cdn.who.int/media/docs/default-source/mca-documents/child/imci-integrated-management-of-childhood-illness/imci-in-service-training/imci-chart-booklet.pdf",
+          "consulte_le": "2026-08-12",
+          "remarque": "Référentiel générique OMS pour les enfants de moins de 5 ans (danger signs, tirage, stridor). Une adaptation sénégalaise (PCIME Sénégal, révisée en 2013/2014) existe et est utilisée par le MSAS, mais je n'ai trouvé qu'une référence bibliographique, sans PDF public accessible à cette date."
+        }
+      ]
+    },
+    {
+      "motif": "abdominal",
+      "titre": "Douleurs abdominales",
+      "signes_alerte": [
+        "Douleur brutale, intense, avec ventre rigide (défense/contracture abdominale)",
+        "Douleur associée à une fièvre élevée et une altération sévère de l'état général",
+        "Signes de choc (pâleur, sueurs froides, tachycardie, chute de tension)",
+        "Vomissements incoercibles empêchant l'hydratation",
+        "Sang dans les vomissements ou les selles",
+        "Absence de transit et de gaz avec ballonnement (suspicion d'occlusion)",
+        "Douleur migrant vers la fosse iliaque droite (suspicion d'appendicite)",
+        "Douleur abdominale chez la femme enceinte, en particulier avec saignement",
+        "Chez l'enfant : douleur avec léthargie, incapacité à boire, vomissements répétés"
+      ],
+      "orientation": "Urgence chirurgicale/médicale immédiate en cas de défense abdominale, choc, occlusion ou saignement digestif.",
+      "sources": [
+        {
+          "titre": "Acute Abdominal Pain in Adults: Evaluation and Diagnosis",
+          "editeur": "American Family Physician (American Academy of Family Physicians) - revue à comité de lecture",
+          "annee": 2023,
+          "section": "Differential diagnosis and red flags in acute abdominal pain",
+          "url": "https://www.aafp.org/pubs/afp/issues/2023/0600/acute-abdominal-pain-adults.html",
+          "consulte_le": "2026-08-12",
+          "remarque": "Mise à jour 2023 de l'article de référence Cartwright & Knudson (2008). Source scientifique reconnue mais non sénégalaise ; utilisée faute de protocole national public identifié pour ce motif en soins primaires."
+        },
+        {
+          "titre": "Integrated Management of Childhood Illness (IMCI) - Chart Booklet",
+          "editeur": "World Health Organization (OMS)",
+          "annee": 2014,
+          "section": "General danger signs",
+          "url": "https://cdn.who.int/media/docs/default-source/mca-documents/child/imci-integrated-management-of-childhood-illness/imci-in-service-training/imci-chart-booklet.pdf",
+          "consulte_le": "2026-08-12",
+          "remarque": "Pour les signes de danger généraux chez l'enfant de moins de 5 ans (léthargie, incapacité à boire, vomissements répétés)."
+        }
+      ]
+    },
+    {
+      "motif": "paludisme",
+      "titre": "Paludisme (fièvre)",
+      "regle_fondamentale": "Devant toute fièvre ou antécédent de fièvre dans les dernières 24 à 48h, un TDR (Test de Diagnostic Rapide) doit être systématiquement réalisé avant tout traitement. Aucun traitement antipaludique ne doit être administré sans confirmation biologique (TDR ou goutte épaisse), sauf en zone/situation où le diagnostic biologique est impossible.",
+      "signes_paludisme_simple": [
+        "Chez l'adulte : fièvre, frissons, céphalées, sueurs, courbatures, herpès labial, hépatomégalie, splénomégalie",
+        "Chez l'enfant/nourrisson : fièvre associée à nausées, vomissements, diarrhée, douleurs abdominales"
+      ],
+      "signes_alerte_paludisme_grave": [
+        "Troubles de la conscience ou coma",
+        "Prostration (incapable de marcher ou de s'asseoir sans assistance)",
+        "Incapacité à s'alimenter",
+        "Convulsions multiples (2 épisodes ou plus en 24h)",
+        "Détresse respiratoire",
+        "Collapsus cardiovasculaire ou état de choc (extrémités froides, pouls filant, chute de tension)",
+        "Ictère (jaunisse)",
+        "Hémoglobinurie (urines foncées, couleur coca-cola)",
+        "Saignement anormal, spontané",
+        "Œdème pulmonaire",
+        "Chez la femme enceinte : température ≥ 38,5°C = urgence à part entière, une seule convulsion (et non deux) suffit à définir la gravité",
+        "Chez l'enfant : incapacité à boire ou téter, vomissements incoercibles (vomit tout ce qu'il consomme), convulsions ou antécédent de convulsions, léthargie ou inconscience"
+      ],
+      "orientation": "Paludisme simple confirmé (TDR positif, sans signe de gravité) : traitement par CTA (Artéméther-Luméfantrine ou Artésunate-Amodiaquine) en ambulatoire. Tout signe de gravité, quel que soit l'âge → référence en urgence vers une structure disposant d'antipaludiques injectables (artésunate injectable en première intention).",
+      "sources": [
+        {
+          "titre": "Cahier du Participant - Prévention et Prise en charge du Paludisme",
+          "editeur": "Programme National de Lutte contre le Paludisme (PNLP), Direction de la Lutte contre la Maladie, Ministère de la Santé et de l'Action Sociale du Sénégal (MSAS)",
+          "annee": 2015,
+          "section": "Domaine 2 - Prise en charge du paludisme simple et du paludisme grave",
+          "url": "https://www.sante.gouv.sn/sites/default/files/Cahier-du-participant-Directives-PEC-PALUDISME.pdf",
+          "consulte_le": "2026-08-12",
+          "remarque": "Source nationale sénégalaise officielle (manuel de formation des agents de santé du PNLP), hébergée sur le site du Ministère de la Santé. Confirme explicitement la règle du TDR systématique devant toute fièvre de moins de 48h, et détaille les signes de paludisme grave chez l'adulte, l'enfant et la femme enceinte. Daté de 2015 : à vérifier auprès du PNLP (pnlp@pnlp.sn / sante.gouv.sn) qu'aucune version plus récente n'a été publiée depuis."
+        }
+      ]
+    },
+    {
+      "motif": "diarrhee",
+      "titre": "Diarrhée",
+      "signes_alerte": [
+        "Signes de déshydratation sévère : yeux très creux, pli cutané persistant, léthargie ou inconscience, incapacité à boire",
+        "Diarrhée avec sang dans les selles",
+        "Vomissements incoercibles empêchant la réhydratation orale",
+        "Diarrhée persistant plus de 14 jours (diarrhée persistante)",
+        "Fièvre élevée associée",
+        "Diarrhée chez un nourrisson de moins de 6 mois ou chez un enfant sévèrement dénutri"
+      ],
+      "orientation": "Réhydratation (SRO) à débuter immédiatement dans tous les cas. Orientation en urgence si signes de déshydratation sévère, sang dans les selles ou vomissements incoercibles, en particulier chez l'enfant.",
+      "sources": [
+        {
+          "titre": "Diarrhoeal disease - Fact sheet",
+          "editeur": "World Health Organization (OMS)",
+          "annee": 2024,
+          "section": "Signs requiring medical consultation",
+          "url": "https://www.who.int/news-room/fact-sheets/detail/diarrhoeal-disease",
+          "consulte_le": "2026-08-12",
+          "remarque": "La fiche OMS mentionne explicitement de consulter un professionnel de santé en particulier en cas de diarrhée persistante, de sang dans les selles ou de signes de déshydratation."
+        },
+        {
+          "titre": "Integrated Management of Childhood Illness (IMCI) - Chart Booklet",
+          "editeur": "World Health Organization (OMS)",
+          "annee": 2014,
+          "section": "Diarrhoea - Assess & classify dehydration (Plan A/B/C)",
+          "url": "https://cdn.who.int/media/docs/default-source/mca-documents/child/imci-integrated-management-of-childhood-illness/imci-in-service-training/imci-chart-booklet.pdf",
+          "consulte_le": "2026-08-12",
+          "remarque": "Référentiel détaillé pour l'évaluation de la déshydratation et la classification de gravité chez l'enfant de moins de 5 ans."
+        }
+      ]
+    }
+  ],
+  "note_transversale": [
+    {
+      "texte": "Chez l'enfant de moins de 5 ans, tout signe de danger général de l'OMS (incapacité à boire ou téter, vomissements de tout ce qui est ingéré, convulsions, léthargie ou inconscience) impose une orientation immédiate vers une structure de soins, quel que soit le motif initial de consultation.",
+      "source": {
+        "titre": "Integrated Management of Childhood Illness (IMCI) - Chart Booklet",
+        "editeur": "World Health Organization (OMS)",
+        "annee": 2014,
+        "url": "https://cdn.who.int/media/docs/default-source/mca-documents/child/imci-integrated-management-of-childhood-illness/imci-in-service-training/imci-chart-booklet.pdf",
+        "consulte_le": "2026-08-12"
+      }
+    },
+    {
+      "texte": "Au Sénégal, devant toute fièvre ou antécédent de fièvre dans les dernières 24 à 48h — donc y compris pour une céphalée fébrile, des douleurs abdominales fébriles, ou une diarrhée fébrile — un TDR paludisme doit être réalisé systématiquement avant tout traitement, quel que soit le motif de consultation initial. C'est la règle la plus directement applicable et la plus solide de ce document, car elle provient d'une source nationale sénégalaise officielle.",
+      "source": {
+        "titre": "Cahier du Participant - Prévention et Prise en charge du Paludisme",
+        "editeur": "Programme National de Lutte contre le Paludisme (PNLP) / MSAS Sénégal",
+        "annee": 2015,
+        "url": "https://www.sante.gouv.sn/sites/default/files/Cahier-du-participant-Directives-PEC-PALUDISME.pdf",
+        "consulte_le": "2026-08-12"
+      }
+    }
+  ],
+  "limites_de_ce_document": [
+    "Aucun protocole national sénégalais public en ligne n'a été identifié pour la céphalée et les douleurs abdominales en soins primaires (hors PNT pour la toux/tuberculose et PNLP pour le paludisme)",
+    "L'adaptation sénégalaise 2013/2014 du livret PCIME existe (référencée dans la littérature scientifique) mais son PDF n'a pas pu être localisé publiquement ; la version OMS générique a été utilisée à la place",
+    "Le document PNLP utilisé pour le paludisme date de 2015 ; sa validité à ce jour (2026) devrait être confirmée auprès du PNLP avant tout usage clinique, les posologies de CTA ou seuils biologiques ayant pu être révisés depuis"
+  ],
+  "validation": {
+    "statut": "brouillon",
+    "par": "",
+    "qualite": "",
+    "date": "",
+    "commentaire": "Sources vérifiables et citées, dont deux sources nationales sénégalaises officielles (PNT pour la toux, PNLP/MSAS pour le paludisme). Statut maintenu à 'brouillon' : nécessite la relecture d'un médecin sénégalais pour valider l'applicabilité locale et confirmer que le document PNLP de 2015 est toujours la référence en vigueur (ou trouver une version plus récente auprès du PNLP)."
+  }
+}

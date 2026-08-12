@@ -5,38 +5,92 @@
     "volume_cible": "14 règles, soit celles déjà codées dans alertes.py.",
     "conseil": "Les signes d'alerte sont largement universels : recomedicales.fr est une bonne source pour cette partie, contrairement aux posologies."
   },
-
   "regles": [
-    {
-      "code": "dyspnee",
-      "libelle": "Difficulté respiratoire",
-      "niveau": "urgent",
-      "motifs": ["fievre_palu", "respiratoire", "abdominal"],
-      "condition_lisible": "Le patient répond oui à la question sur la difficulté à respirer",
-      "justification": "",
-      "source": {
-        "titre": "",
-        "editeur": "",
-        "annee": null,
-        "section": "",
-        "url": "",
-        "consulte_le": ""
-      },
-      "validation": {
-        "statut": "brouillon",
-        "par": "",
-        "qualite": "",
-        "date": "",
-        "commentaire": ""
-      }
-    },
-
     {
       "code": "age_nourrisson",
       "libelle": "Enfant de moins de 5 ans",
       "niveau": "oriente",
-      "motifs": ["tous"],
+      "motifs": [
+        "tous"
+      ],
       "condition_lisible": "Tranche d'âge déclarée inférieure à 5 ans",
+      "justification": "Chez l'enfant de moins de 5 ans, tout signe de danger général de l'OMS impose une orientation immédiate vers une structure de soins, quel que soit le motif initial.",
+      "source": {
+        "titre": "Integrated Management of Childhood Illness (IMCI) - Chart Booklet",
+        "editeur": "World Health Organization (OMS)",
+        "annee": 2014,
+        "section": "General danger signs",
+        "url": "https://cdn.who.int/media/docs/default-source/mca-documents/child/imci-integrated-management-of-childhood-illness/imci-in-service-training/imci-chart-booklet.pdf",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "brouillon",
+        "par": "",
+        "qualite": "",
+        "date": "",
+        "commentaire": "Source scientifique reconnue mais non sénégalaise. Statut maintenu à brouillon : à faire relire par un médecin sénégalais pour confirmer l'applicabilité locale."
+      }
+    },
+    {
+      "code": "grossesse",
+      "libelle": "Grossesse déclarée",
+      "niveau": "oriente",
+      "motifs": [
+        "tous"
+      ],
+      "condition_lisible": "Le patient répond oui à la question sur la grossesse",
+      "justification": "Chez la femme enceinte, une température supérieure ou égale à 38,5°C constitue une urgence à part entière et une seule convulsion suffit à définir la gravité. Une douleur abdominale chez la femme enceinte, en particulier avec saignement, est également un signe d'alerte.",
+      "source": {
+        "titre": "Cahier du Participant - Prévention et Prise en charge du Paludisme",
+        "editeur": "Programme National de Lutte contre le Paludisme (PNLP), Direction de la Lutte contre la Maladie, Ministère de la Santé et de l'Action Sociale du Sénégal (MSAS)",
+        "annee": 2015,
+        "section": "Domaine 2 - Prise en charge du paludisme simple et du paludisme grave",
+        "url": "https://www.sante.gouv.sn/sites/default/files/Cahier-du-participant-Directives-PEC-PALUDISME.pdf",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "valide",
+        "par": "Source institutionnelle",
+        "qualite": "Document officiel MSAS/gouvernement",
+        "date": "2026-08-12",
+        "commentaire": ""
+      }
+    },
+    {
+      "code": "dyspnee",
+      "libelle": "Difficulté respiratoire",
+      "niveau": "urgent",
+      "motifs": [
+        "fievre_palu",
+        "respiratoire",
+        "abdominal"
+      ],
+      "condition_lisible": "Le patient répond oui à la question sur la difficulté à respirer",
+      "justification": "La détresse respiratoire figure parmi les signes de paludisme grave imposant une référence en urgence. Chez l'enfant de moins de 5 ans, tirage sous-costal et stridor au calme sont des signes de danger.",
+      "source": {
+        "titre": "Cahier du Participant - Prévention et Prise en charge du Paludisme",
+        "editeur": "Programme National de Lutte contre le Paludisme (PNLP), Direction de la Lutte contre la Maladie, Ministère de la Santé et de l'Action Sociale du Sénégal (MSAS)",
+        "annee": 2015,
+        "section": "Domaine 2 - Prise en charge du paludisme simple et du paludisme grave",
+        "url": "https://www.sante.gouv.sn/sites/default/files/Cahier-du-participant-Directives-PEC-PALUDISME.pdf",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "valide",
+        "par": "Source institutionnelle",
+        "qualite": "Document officiel MSAS/gouvernement",
+        "date": "2026-08-12",
+        "commentaire": ""
+      }
+    },
+    {
+      "code": "douleur_thoracique",
+      "libelle": "Douleur thoracique",
+      "niveau": "urgent",
+      "motifs": [
+        "respiratoire"
+      ],
+      "condition_lisible": "Le patient répond oui à la question sur la douleur thoracique",
       "justification": "",
       "source": {
         "titre": "",
@@ -51,7 +105,692 @@
         "par": "",
         "qualite": "",
         "date": "",
+        "commentaire": "Aucune source identifiée dans les documents fournis. Règle codée dans alertes.py mais non documentée : source à rechercher."
+      }
+    },
+    {
+      "code": "conscience",
+      "libelle": "Altération de la conscience",
+      "niveau": "urgent",
+      "motifs": [
+        "tous"
+      ],
+      "condition_lisible": "Le patient répond oui à la question sur l'altération de la conscience",
+      "justification": "Les troubles de la conscience ou le coma figurent parmi les signes de paludisme grave imposant une référence en urgence. La léthargie ou l'inconscience est un signe de danger général chez l'enfant.",
+      "source": {
+        "titre": "Cahier du Participant - Prévention et Prise en charge du Paludisme",
+        "editeur": "Programme National de Lutte contre le Paludisme (PNLP), Direction de la Lutte contre la Maladie, Ministère de la Santé et de l'Action Sociale du Sénégal (MSAS)",
+        "annee": 2015,
+        "section": "Domaine 2 - Prise en charge du paludisme simple et du paludisme grave",
+        "url": "https://www.sante.gouv.sn/sites/default/files/Cahier-du-participant-Directives-PEC-PALUDISME.pdf",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "valide",
+        "par": "Source institutionnelle",
+        "qualite": "Document officiel MSAS/gouvernement",
+        "date": "2026-08-12",
         "commentaire": ""
+      }
+    },
+    {
+      "code": "saignement",
+      "libelle": "Saignement actif",
+      "niveau": "urgent",
+      "motifs": [
+        "fievre_palu",
+        "respiratoire",
+        "abdominal",
+        "diarrhee"
+      ],
+      "condition_lisible": "Le patient répond oui à la question sur un saignement",
+      "justification": "Le saignement anormal et spontané figure parmi les signes de paludisme grave. Le sang dans les vomissements ou les selles, les crachats sanglants et le sang dans les selles sont également des signes d'alerte selon les motifs.",
+      "source": {
+        "titre": "Cahier du Participant - Prévention et Prise en charge du Paludisme",
+        "editeur": "Programme National de Lutte contre le Paludisme (PNLP), Direction de la Lutte contre la Maladie, Ministère de la Santé et de l'Action Sociale du Sénégal (MSAS)",
+        "annee": 2015,
+        "section": "Domaine 2 - Prise en charge du paludisme simple et du paludisme grave",
+        "url": "https://www.sante.gouv.sn/sites/default/files/Cahier-du-participant-Directives-PEC-PALUDISME.pdf",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "valide",
+        "par": "Source institutionnelle",
+        "qualite": "Document officiel MSAS/gouvernement",
+        "date": "2026-08-12",
+        "commentaire": ""
+      }
+    },
+    {
+      "code": "raideur_nuque",
+      "libelle": "Raideur de nuque avec fièvre — suspicion méningée",
+      "niveau": "urgent",
+      "motifs": [
+        "cephalee",
+        "fievre_palu"
+      ],
+      "condition_lisible": "Le patient répond oui à la raideur de nuque ET oui à la fièvre",
+      "justification": "Une céphalée avec fièvre et/ou syndrome méningé, en l'absence de cause générale bénigne évidente, impose une prise en charge urgente.",
+      "source": {
+        "titre": "Pertinence de l'imagerie en cas de céphalées de l'enfant - Fiche de bonnes pratiques",
+        "editeur": "Haute Autorité de Santé (HAS, France), en coopération avec le G4 (Conseil national de la radiologie)",
+        "annee": 2023,
+        "section": "Drapeaux rouges nécessitant une imagerie cérébrale",
+        "url": "https://www.has-sante.fr/upload/docs/application/pdf/2024-01/app480_fiche_pertinence_cephalee_mel.pdf",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "brouillon",
+        "par": "",
+        "qualite": "",
+        "date": "",
+        "commentaire": "Source scientifique reconnue mais non sénégalaise. Statut maintenu à brouillon : à faire relire par un médecin sénégalais pour confirmer l'applicabilité locale."
+      }
+    },
+    {
+      "code": "deshydratation",
+      "libelle": "Signes de déshydratation",
+      "niveau": "urgent",
+      "motifs": [
+        "diarrhee",
+        "abdominal"
+      ],
+      "condition_lisible": "Le patient répond oui à la question sur les signes de déshydratation",
+      "justification": "Yeux très creux, pli cutané persistant, léthargie ou inconscience et incapacité à boire signent une déshydratation sévère nécessitant une orientation urgente.",
+      "source": {
+        "titre": "Diarrhoeal disease - Fact sheet",
+        "editeur": "World Health Organization (OMS)",
+        "annee": 2024,
+        "section": "Signs requiring medical consultation",
+        "url": "https://www.who.int/news-room/fact-sheets/detail/diarrhoeal-disease",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "brouillon",
+        "par": "",
+        "qualite": "",
+        "date": "",
+        "commentaire": "Source scientifique reconnue mais non sénégalaise. Statut maintenu à brouillon : à faire relire par un médecin sénégalais pour confirmer l'applicabilité locale."
+      }
+    },
+    {
+      "code": "fievre_prolongee",
+      "libelle": "Fièvre évoluant depuis plus de 3 jours",
+      "niveau": "oriente",
+      "motifs": [
+        "fievre_palu",
+        "respiratoire"
+      ],
+      "condition_lisible": "Le patient répond oui à la fièvre ET la durée déclarée dépasse 3 jours",
+      "justification": "Devant toute fièvre ou antécédent de fièvre dans les dernières 24 à 48h, un TDR doit être systématiquement réalisé avant tout traitement. Une fièvre persistante avec amaigrissement évoque par ailleurs une tuberculose.",
+      "source": {
+        "titre": "Cahier du Participant - Prévention et Prise en charge du Paludisme",
+        "editeur": "Programme National de Lutte contre le Paludisme (PNLP), Direction de la Lutte contre la Maladie, Ministère de la Santé et de l'Action Sociale du Sénégal (MSAS)",
+        "annee": 2015,
+        "section": "Domaine 2 - Prise en charge du paludisme simple et du paludisme grave",
+        "url": "https://www.sante.gouv.sn/sites/default/files/Cahier-du-participant-Directives-PEC-PALUDISME.pdf",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "valide",
+        "par": "Source institutionnelle",
+        "qualite": "Document officiel MSAS/gouvernement",
+        "date": "2026-08-12",
+        "commentaire": "Le principe d'orientation devant une fièvre persistante est appuyé par la source, mais le seuil de 3 jours codé dans alertes.py n'y figure pas : il relève d'un choix d'implémentation, à faire trancher par un médecin."
+      }
+    },
+    {
+      "code": "diarrhee_severe",
+      "libelle": "Diarrhée profuse (plus de 6 selles par jour)",
+      "niveau": "oriente",
+      "motifs": [
+        "diarrhee"
+      ],
+      "condition_lisible": "Le nombre de selles par jour déclaré dépasse 6",
+      "justification": "La fiche OMS recommande de consulter un professionnel de santé en cas de diarrhée persistante, de sang dans les selles ou de signes de déshydratation.",
+      "source": {
+        "titre": "Diarrhoeal disease - Fact sheet",
+        "editeur": "World Health Organization (OMS)",
+        "annee": 2024,
+        "section": "Signs requiring medical consultation",
+        "url": "https://www.who.int/news-room/fact-sheets/detail/diarrhoeal-disease",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "valide",
+        "par": "Source institutionnelle",
+        "qualite": "Document OMS (source internationale, non sénégalaise)",
+        "date": "2026-08-12",
+        "commentaire": "Le seuil de 6 selles par jour codé dans alertes.py ne figure pas dans la source, qui ne quantifie pas la diarrhée profuse : choix d'implémentation à faire trancher par un médecin. La source est par ailleurs internationale et non sénégalaise."
+      }
+    },
+    {
+      "code": "vomissements_persistants",
+      "libelle": "Vomissements avec fièvre",
+      "niveau": "oriente",
+      "motifs": [
+        "fievre_palu",
+        "abdominal",
+        "diarrhee"
+      ],
+      "condition_lisible": "Le patient répond oui aux vomissements ET oui à la fièvre",
+      "justification": "Chez l'enfant, les vomissements incoercibles (vomit tout ce qu'il consomme) figurent parmi les signes de paludisme grave. Les vomissements incoercibles empêchant l'hydratation sont également un signe d'alerte abdominal et digestif.",
+      "source": {
+        "titre": "Cahier du Participant - Prévention et Prise en charge du Paludisme",
+        "editeur": "Programme National de Lutte contre le Paludisme (PNLP), Direction de la Lutte contre la Maladie, Ministère de la Santé et de l'Action Sociale du Sénégal (MSAS)",
+        "annee": 2015,
+        "section": "Domaine 2 - Prise en charge du paludisme simple et du paludisme grave",
+        "url": "https://www.sante.gouv.sn/sites/default/files/Cahier-du-participant-Directives-PEC-PALUDISME.pdf",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "valide",
+        "par": "Source institutionnelle",
+        "qualite": "Document officiel MSAS/gouvernement",
+        "date": "2026-08-12",
+        "commentaire": ""
+      }
+    },
+    {
+      "code": "terrain",
+      "libelle": "Antécédent de diabète ou d'hypertension",
+      "niveau": "oriente",
+      "motifs": [
+        "tous"
+      ],
+      "condition_lisible": "Le patient répond oui à la question sur les antécédents",
+      "justification": "",
+      "source": {
+        "titre": "",
+        "editeur": "",
+        "annee": null,
+        "section": "",
+        "url": "",
+        "consulte_le": ""
+      },
+      "validation": {
+        "statut": "brouillon",
+        "par": "",
+        "qualite": "",
+        "date": "",
+        "commentaire": "Aucune source identifiée dans les documents fournis. Règle codée dans alertes.py mais non documentée : source à rechercher."
+      }
+    },
+    {
+      "code": "echec_traitement",
+      "libelle": "Absence d'amélioration après automédication",
+      "niveau": "oriente",
+      "motifs": [
+        "cephalee"
+      ],
+      "condition_lisible": "Le patient répond oui à la question sur l'échec de l'automédication",
+      "justification": "L'absence d'amélioration malgré un traitement antalgique bien conduit est un drapeau rouge : la réponse au traitement ne doit pas rassurer à tort.",
+      "source": {
+        "titre": "Pertinence de l'imagerie en cas de céphalées de l'enfant - Fiche de bonnes pratiques",
+        "editeur": "Haute Autorité de Santé (HAS, France), en coopération avec le G4 (Conseil national de la radiologie)",
+        "annee": 2023,
+        "section": "Drapeaux rouges nécessitant une imagerie cérébrale",
+        "url": "https://www.has-sante.fr/upload/docs/application/pdf/2024-01/app480_fiche_pertinence_cephalee_mel.pdf",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "brouillon",
+        "par": "",
+        "qualite": "",
+        "date": "",
+        "commentaire": "Source scientifique reconnue mais non sénégalaise. Statut maintenu à brouillon : à faire relire par un médecin sénégalais pour confirmer l'applicabilité locale. La source ne documente ce critère que pour le motif céphalée, alors que la règle s'applique à tous les motifs dans alertes.py."
+      }
+    },
+    {
+      "code": "duree_longue",
+      "libelle": "Symptômes évoluant depuis plus de 7 jours",
+      "niveau": "oriente",
+      "motifs": [
+        "tous"
+      ],
+      "condition_lisible": "La durée déclarée des symptômes dépasse 7 jours",
+      "justification": "Une toux persistant plus de 3 semaines est un critère national sénégalais de suspicion de tuberculose imposant un dépistage systématique. Une diarrhée de plus de 14 jours est dite persistante et impose une consultation.",
+      "source": {
+        "titre": "Programme National de Lutte contre la Tuberculose (PNT) - Site officiel",
+        "editeur": "Ministère de la Santé et de l'Action Sociale du Sénégal (MSAS)",
+        "annee": 2024,
+        "section": "Symptômes évocateurs de la tuberculose",
+        "url": "https://www.pnt.sn/",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "valide",
+        "par": "Source institutionnelle",
+        "qualite": "Document officiel MSAS/gouvernement",
+        "date": "2026-08-12",
+        "commentaire": "Le principe d'orientation sur durée prolongée est appuyé par la source, mais le seuil de 7 jours codé dans alertes.py n'y figure pas : les sources citent 3 semaines pour la toux et 14 jours pour la diarrhée. Choix d'implémentation à trancher."
+      }
+    },
+    {
+      "code": "cephalee_brutale",
+      "libelle": "Céphalée brutale en coup de tonnerre",
+      "niveau": "urgent",
+      "motifs": [
+        "cephalee"
+      ],
+      "condition_lisible": "Céphalée maximale d'emblée en moins d'une heure",
+      "justification": "Évoque une hémorragie méningée jusqu'à preuve du contraire.",
+      "source": {
+        "titre": "Pertinence de l'imagerie en cas de céphalées de l'enfant - Fiche de bonnes pratiques",
+        "editeur": "Haute Autorité de Santé (HAS, France), en coopération avec le G4 (Conseil national de la radiologie)",
+        "annee": 2023,
+        "section": "Drapeaux rouges nécessitant une imagerie cérébrale",
+        "url": "https://www.has-sante.fr/upload/docs/application/pdf/2024-01/app480_fiche_pertinence_cephalee_mel.pdf",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "brouillon",
+        "par": "",
+        "qualite": "",
+        "date": "",
+        "commentaire": "Signe présent dans les sources mais sans règle correspondante : à coder dans alertes.py. Source scientifique reconnue mais non sénégalaise. Statut maintenu à brouillon : à faire relire par un médecin sénégalais pour confirmer l'applicabilité locale."
+      }
+    },
+    {
+      "code": "deficit_neurologique",
+      "libelle": "Déficit neurologique focal",
+      "niveau": "urgent",
+      "motifs": [
+        "cephalee"
+      ],
+      "condition_lisible": "Céphalée accompagnée d'une anomalie à l'examen neurologique",
+      "justification": "Céphalée avec déficit focal, confusion ou trouble de la conscience.",
+      "source": {
+        "titre": "Pertinence de l'imagerie en cas de céphalées de l'enfant - Fiche de bonnes pratiques",
+        "editeur": "Haute Autorité de Santé (HAS, France), en coopération avec le G4 (Conseil national de la radiologie)",
+        "annee": 2023,
+        "section": "Drapeaux rouges nécessitant une imagerie cérébrale",
+        "url": "https://www.has-sante.fr/upload/docs/application/pdf/2024-01/app480_fiche_pertinence_cephalee_mel.pdf",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "brouillon",
+        "par": "",
+        "qualite": "",
+        "date": "",
+        "commentaire": "Signe présent dans les sources mais sans règle correspondante : à coder dans alertes.py. Source scientifique reconnue mais non sénégalaise. Statut maintenu à brouillon : à faire relire par un médecin sénégalais pour confirmer l'applicabilité locale."
+      }
+    },
+    {
+      "code": "hypertension_intracranienne",
+      "libelle": "Signes d'hypertension intracrânienne",
+      "niveau": "urgent",
+      "motifs": [
+        "cephalee"
+      ],
+      "condition_lisible": "Céphalée avec vomissements en jet, œdème papillaire ou troubles visuels",
+      "justification": "Ces signes traduisent une hypertension intracrânienne et imposent une imagerie.",
+      "source": {
+        "titre": "Pertinence de l'imagerie en cas de céphalées de l'enfant - Fiche de bonnes pratiques",
+        "editeur": "Haute Autorité de Santé (HAS, France), en coopération avec le G4 (Conseil national de la radiologie)",
+        "annee": 2023,
+        "section": "Drapeaux rouges nécessitant une imagerie cérébrale",
+        "url": "https://www.has-sante.fr/upload/docs/application/pdf/2024-01/app480_fiche_pertinence_cephalee_mel.pdf",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "brouillon",
+        "par": "",
+        "qualite": "",
+        "date": "",
+        "commentaire": "Signe présent dans les sources mais sans règle correspondante : à coder dans alertes.py. Source scientifique reconnue mais non sénégalaise. Statut maintenu à brouillon : à faire relire par un médecin sénégalais pour confirmer l'applicabilité locale."
+      }
+    },
+    {
+      "code": "cephalee_post_traumatique",
+      "libelle": "Céphalée après traumatisme crânien",
+      "niveau": "urgent",
+      "motifs": [
+        "cephalee"
+      ],
+      "condition_lisible": "Céphalée survenant après un traumatisme crânien",
+      "justification": "Drapeau rouge nécessitant une imagerie cérébrale.",
+      "source": {
+        "titre": "Pertinence de l'imagerie en cas de céphalées de l'enfant - Fiche de bonnes pratiques",
+        "editeur": "Haute Autorité de Santé (HAS, France), en coopération avec le G4 (Conseil national de la radiologie)",
+        "annee": 2023,
+        "section": "Drapeaux rouges nécessitant une imagerie cérébrale",
+        "url": "https://www.has-sante.fr/upload/docs/application/pdf/2024-01/app480_fiche_pertinence_cephalee_mel.pdf",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "brouillon",
+        "par": "",
+        "qualite": "",
+        "date": "",
+        "commentaire": "Signe présent dans les sources mais sans règle correspondante : à coder dans alertes.py. Source scientifique reconnue mais non sénégalaise. Statut maintenu à brouillon : à faire relire par un médecin sénégalais pour confirmer l'applicabilité locale."
+      }
+    },
+    {
+      "code": "cephalee_nouvelle_apres_50_ans",
+      "libelle": "Céphalée nouvelle chez un patient de plus de 50 ans",
+      "niveau": "oriente",
+      "motifs": [
+        "cephalee"
+      ],
+      "condition_lisible": "Céphalée nouvelle et inhabituelle chez un patient de plus de 50 ans",
+      "justification": "Une céphalée récente inhabituelle, continue ou d'intensité croissante sur plusieurs jours ou semaines, est un drapeau rouge dans cette tranche d'âge.",
+      "source": {
+        "titre": "Pertinence de l'imagerie en cas de céphalées de l'enfant - Fiche de bonnes pratiques",
+        "editeur": "Haute Autorité de Santé (HAS, France), en coopération avec le G4 (Conseil national de la radiologie)",
+        "annee": 2023,
+        "section": "Drapeaux rouges nécessitant une imagerie cérébrale",
+        "url": "https://www.has-sante.fr/upload/docs/application/pdf/2024-01/app480_fiche_pertinence_cephalee_mel.pdf",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "brouillon",
+        "par": "",
+        "qualite": "",
+        "date": "",
+        "commentaire": "Signe présent dans les sources mais sans règle correspondante : à coder dans alertes.py. Source scientifique reconnue mais non sénégalaise. Statut maintenu à brouillon : à faire relire par un médecin sénégalais pour confirmer l'applicabilité locale."
+      }
+    },
+    {
+      "code": "toux_plus_3_semaines",
+      "libelle": "Toux persistant plus de 3 semaines — dépistage tuberculose",
+      "niveau": "oriente",
+      "motifs": [
+        "respiratoire"
+      ],
+      "condition_lisible": "Durée de toux déclarée supérieure à 21 jours",
+      "justification": "Critère national sénégalais de suspicion de tuberculose, à faire dépister systématiquement. Test GeneXpert disponible dans la LNMPE.",
+      "source": {
+        "titre": "Programme National de Lutte contre la Tuberculose (PNT) - Site officiel",
+        "editeur": "Ministère de la Santé et de l'Action Sociale du Sénégal (MSAS)",
+        "annee": 2024,
+        "section": "Symptômes évocateurs de la tuberculose",
+        "url": "https://www.pnt.sn/",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "valide",
+        "par": "Source institutionnelle",
+        "qualite": "Document officiel MSAS/gouvernement",
+        "date": "2026-08-12",
+        "commentaire": "Signe présent dans les sources mais sans règle correspondante : à coder dans alertes.py. "
+      }
+    },
+    {
+      "code": "defense_abdominale",
+      "libelle": "Défense ou contracture abdominale",
+      "niveau": "urgent",
+      "motifs": [
+        "abdominal"
+      ],
+      "condition_lisible": "Douleur brutale et intense avec ventre rigide",
+      "justification": "Urgence chirurgicale ou médicale immédiate.",
+      "source": {
+        "titre": "Acute Abdominal Pain in Adults: Evaluation and Diagnosis",
+        "editeur": "American Family Physician (American Academy of Family Physicians) - revue à comité de lecture",
+        "annee": 2023,
+        "section": "Differential diagnosis and red flags in acute abdominal pain",
+        "url": "https://www.aafp.org/pubs/afp/issues/2023/0600/acute-abdominal-pain-adults.html",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "brouillon",
+        "par": "",
+        "qualite": "",
+        "date": "",
+        "commentaire": "Signe présent dans les sources mais sans règle correspondante : à coder dans alertes.py. Source scientifique reconnue mais non sénégalaise. Statut maintenu à brouillon : à faire relire par un médecin sénégalais pour confirmer l'applicabilité locale."
+      }
+    },
+    {
+      "code": "signes_de_choc",
+      "libelle": "Signes de choc",
+      "niveau": "urgent",
+      "motifs": [
+        "abdominal",
+        "fievre_palu"
+      ],
+      "condition_lisible": "Pâleur, sueurs froides, tachycardie ou chute de tension",
+      "justification": "Le collapsus cardiovasculaire ou état de choc (extrémités froides, pouls filant, chute de tension) figure parmi les signes de paludisme grave imposant une référence en urgence.",
+      "source": {
+        "titre": "Cahier du Participant - Prévention et Prise en charge du Paludisme",
+        "editeur": "Programme National de Lutte contre le Paludisme (PNLP), Direction de la Lutte contre la Maladie, Ministère de la Santé et de l'Action Sociale du Sénégal (MSAS)",
+        "annee": 2015,
+        "section": "Domaine 2 - Prise en charge du paludisme simple et du paludisme grave",
+        "url": "https://www.sante.gouv.sn/sites/default/files/Cahier-du-participant-Directives-PEC-PALUDISME.pdf",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "valide",
+        "par": "Source institutionnelle",
+        "qualite": "Document officiel MSAS/gouvernement",
+        "date": "2026-08-12",
+        "commentaire": "Signe présent dans les sources mais sans règle correspondante : à coder dans alertes.py. "
+      }
+    },
+    {
+      "code": "occlusion",
+      "libelle": "Suspicion d'occlusion intestinale",
+      "niveau": "urgent",
+      "motifs": [
+        "abdominal"
+      ],
+      "condition_lisible": "Absence de transit et de gaz avec ballonnement",
+      "justification": "Urgence chirurgicale ou médicale immédiate.",
+      "source": {
+        "titre": "Acute Abdominal Pain in Adults: Evaluation and Diagnosis",
+        "editeur": "American Family Physician (American Academy of Family Physicians) - revue à comité de lecture",
+        "annee": 2023,
+        "section": "Differential diagnosis and red flags in acute abdominal pain",
+        "url": "https://www.aafp.org/pubs/afp/issues/2023/0600/acute-abdominal-pain-adults.html",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "brouillon",
+        "par": "",
+        "qualite": "",
+        "date": "",
+        "commentaire": "Signe présent dans les sources mais sans règle correspondante : à coder dans alertes.py. Source scientifique reconnue mais non sénégalaise. Statut maintenu à brouillon : à faire relire par un médecin sénégalais pour confirmer l'applicabilité locale."
+      }
+    },
+    {
+      "code": "douleur_fosse_iliaque_droite",
+      "libelle": "Douleur migrant vers la fosse iliaque droite",
+      "niveau": "urgent",
+      "motifs": [
+        "abdominal"
+      ],
+      "condition_lisible": "Douleur abdominale migrant vers la fosse iliaque droite",
+      "justification": "Suspicion d'appendicite.",
+      "source": {
+        "titre": "Acute Abdominal Pain in Adults: Evaluation and Diagnosis",
+        "editeur": "American Family Physician (American Academy of Family Physicians) - revue à comité de lecture",
+        "annee": 2023,
+        "section": "Differential diagnosis and red flags in acute abdominal pain",
+        "url": "https://www.aafp.org/pubs/afp/issues/2023/0600/acute-abdominal-pain-adults.html",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "brouillon",
+        "par": "",
+        "qualite": "",
+        "date": "",
+        "commentaire": "Signe présent dans les sources mais sans règle correspondante : à coder dans alertes.py. Source scientifique reconnue mais non sénégalaise. Statut maintenu à brouillon : à faire relire par un médecin sénégalais pour confirmer l'applicabilité locale."
+      }
+    },
+    {
+      "code": "tdr_systematique",
+      "libelle": "TDR paludisme systématique devant toute fièvre",
+      "niveau": "oriente",
+      "motifs": [
+        "tous"
+      ],
+      "condition_lisible": "Fièvre déclarée ou antécédent de fièvre dans les dernières 24 à 48h, quel que soit le motif de consultation",
+      "justification": "Règle nationale sénégalaise : devant toute fièvre ou antécédent de fièvre dans les dernières 24 à 48h, un TDR doit être systématiquement réalisé avant tout traitement. Aucun traitement antipaludique ne doit être administré sans confirmation biologique, sauf en zone où le diagnostic biologique est impossible.",
+      "source": {
+        "titre": "Cahier du Participant - Prévention et Prise en charge du Paludisme",
+        "editeur": "Programme National de Lutte contre le Paludisme (PNLP), Direction de la Lutte contre la Maladie, Ministère de la Santé et de l'Action Sociale du Sénégal (MSAS)",
+        "annee": 2015,
+        "section": "Domaine 2 - Prise en charge du paludisme simple et du paludisme grave",
+        "url": "https://www.sante.gouv.sn/sites/default/files/Cahier-du-participant-Directives-PEC-PALUDISME.pdf",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "valide",
+        "par": "Source institutionnelle",
+        "qualite": "Document officiel MSAS/gouvernement",
+        "date": "2026-08-12",
+        "commentaire": "Signe présent dans les sources mais sans règle correspondante : à coder dans alertes.py. Règle transversale s'appliquant à tous les motifs, y compris céphalée fébrile, douleurs abdominales fébriles et diarrhée fébrile."
+      }
+    },
+    {
+      "code": "prostration",
+      "libelle": "Prostration",
+      "niveau": "urgent",
+      "motifs": [
+        "fievre_palu"
+      ],
+      "condition_lisible": "Patient incapable de marcher ou de s'asseoir sans assistance",
+      "justification": "Signe de paludisme grave imposant une référence en urgence.",
+      "source": {
+        "titre": "Cahier du Participant - Prévention et Prise en charge du Paludisme",
+        "editeur": "Programme National de Lutte contre le Paludisme (PNLP), Direction de la Lutte contre la Maladie, Ministère de la Santé et de l'Action Sociale du Sénégal (MSAS)",
+        "annee": 2015,
+        "section": "Domaine 2 - Prise en charge du paludisme simple et du paludisme grave",
+        "url": "https://www.sante.gouv.sn/sites/default/files/Cahier-du-participant-Directives-PEC-PALUDISME.pdf",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "valide",
+        "par": "Source institutionnelle",
+        "qualite": "Document officiel MSAS/gouvernement",
+        "date": "2026-08-12",
+        "commentaire": "Signe présent dans les sources mais sans règle correspondante : à coder dans alertes.py. "
+      }
+    },
+    {
+      "code": "ictere",
+      "libelle": "Ictère (jaunisse)",
+      "niveau": "urgent",
+      "motifs": [
+        "fievre_palu"
+      ],
+      "condition_lisible": "Coloration jaune des téguments ou des conjonctives",
+      "justification": "Signe de paludisme grave imposant une référence en urgence.",
+      "source": {
+        "titre": "Cahier du Participant - Prévention et Prise en charge du Paludisme",
+        "editeur": "Programme National de Lutte contre le Paludisme (PNLP), Direction de la Lutte contre la Maladie, Ministère de la Santé et de l'Action Sociale du Sénégal (MSAS)",
+        "annee": 2015,
+        "section": "Domaine 2 - Prise en charge du paludisme simple et du paludisme grave",
+        "url": "https://www.sante.gouv.sn/sites/default/files/Cahier-du-participant-Directives-PEC-PALUDISME.pdf",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "valide",
+        "par": "Source institutionnelle",
+        "qualite": "Document officiel MSAS/gouvernement",
+        "date": "2026-08-12",
+        "commentaire": "Signe présent dans les sources mais sans règle correspondante : à coder dans alertes.py. "
+      }
+    },
+    {
+      "code": "hemoglobinurie",
+      "libelle": "Hémoglobinurie (urines foncées)",
+      "niveau": "urgent",
+      "motifs": [
+        "fievre_palu"
+      ],
+      "condition_lisible": "Urines foncées, couleur coca-cola",
+      "justification": "Signe de paludisme grave imposant une référence en urgence.",
+      "source": {
+        "titre": "Cahier du Participant - Prévention et Prise en charge du Paludisme",
+        "editeur": "Programme National de Lutte contre le Paludisme (PNLP), Direction de la Lutte contre la Maladie, Ministère de la Santé et de l'Action Sociale du Sénégal (MSAS)",
+        "annee": 2015,
+        "section": "Domaine 2 - Prise en charge du paludisme simple et du paludisme grave",
+        "url": "https://www.sante.gouv.sn/sites/default/files/Cahier-du-participant-Directives-PEC-PALUDISME.pdf",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "valide",
+        "par": "Source institutionnelle",
+        "qualite": "Document officiel MSAS/gouvernement",
+        "date": "2026-08-12",
+        "commentaire": "Signe présent dans les sources mais sans règle correspondante : à coder dans alertes.py. "
+      }
+    },
+    {
+      "code": "oedeme_pulmonaire",
+      "libelle": "Œdème pulmonaire",
+      "niveau": "urgent",
+      "motifs": [
+        "fievre_palu",
+        "respiratoire"
+      ],
+      "condition_lisible": "Signes d'œdème pulmonaire",
+      "justification": "Signe de paludisme grave imposant une référence en urgence vers une structure disposant d'antipaludiques injectables.",
+      "source": {
+        "titre": "Cahier du Participant - Prévention et Prise en charge du Paludisme",
+        "editeur": "Programme National de Lutte contre le Paludisme (PNLP), Direction de la Lutte contre la Maladie, Ministère de la Santé et de l'Action Sociale du Sénégal (MSAS)",
+        "annee": 2015,
+        "section": "Domaine 2 - Prise en charge du paludisme simple et du paludisme grave",
+        "url": "https://www.sante.gouv.sn/sites/default/files/Cahier-du-participant-Directives-PEC-PALUDISME.pdf",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "valide",
+        "par": "Source institutionnelle",
+        "qualite": "Document officiel MSAS/gouvernement",
+        "date": "2026-08-12",
+        "commentaire": "Signe présent dans les sources mais sans règle correspondante : à coder dans alertes.py. "
+      }
+    },
+    {
+      "code": "diarrhee_persistante",
+      "libelle": "Diarrhée persistant plus de 14 jours",
+      "niveau": "oriente",
+      "motifs": [
+        "diarrhee"
+      ],
+      "condition_lisible": "Durée de diarrhée déclarée supérieure à 14 jours",
+      "justification": "Une diarrhée de plus de 14 jours est dite persistante et impose une consultation.",
+      "source": {
+        "titre": "Diarrhoeal disease - Fact sheet",
+        "editeur": "World Health Organization (OMS)",
+        "annee": 2024,
+        "section": "Signs requiring medical consultation",
+        "url": "https://www.who.int/news-room/fact-sheets/detail/diarrhoeal-disease",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "brouillon",
+        "par": "",
+        "qualite": "",
+        "date": "",
+        "commentaire": "Signe présent dans les sources mais sans règle correspondante : à coder dans alertes.py. Source scientifique reconnue mais non sénégalaise. Statut maintenu à brouillon : à faire relire par un médecin sénégalais pour confirmer l'applicabilité locale."
+      }
+    },
+    {
+      "code": "nourrisson_moins_6_mois",
+      "libelle": "Diarrhée chez un nourrisson de moins de 6 mois",
+      "niveau": "oriente",
+      "motifs": [
+        "diarrhee"
+      ],
+      "condition_lisible": "Diarrhée chez un nourrisson de moins de 6 mois ou un enfant sévèrement dénutri",
+      "justification": "Terrain à risque imposant une orientation, même en l'absence d'autre signe d'alerte.",
+      "source": {
+        "titre": "Diarrhoeal disease - Fact sheet",
+        "editeur": "World Health Organization (OMS)",
+        "annee": 2024,
+        "section": "Signs requiring medical consultation",
+        "url": "https://www.who.int/news-room/fact-sheets/detail/diarrhoeal-disease",
+        "consulte_le": "2026-08-12"
+      },
+      "validation": {
+        "statut": "brouillon",
+        "par": "",
+        "qualite": "",
+        "date": "",
+        "commentaire": "Signe présent dans les sources mais sans règle correspondante : à coder dans alertes.py. Source scientifique reconnue mais non sénégalaise. Statut maintenu à brouillon : à faire relire par un médecin sénégalais pour confirmer l'applicabilité locale."
       }
     }
   ]
