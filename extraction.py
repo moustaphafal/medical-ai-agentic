@@ -160,6 +160,8 @@ def extraire(champ, texte: str, langue: str = "fr"):
     """Point d'entrée unique. Retourne la valeur ou None."""
     if champ.nom == "motif_principal":
         return extraire_motif(texte)
+    if champ.nom == "age_tranche":
+        return extraire_age(texte, champ.options)
     if champ.type == "entier":
         return extraire_entier(texte)
     if champ.type == "choix":
@@ -176,6 +178,40 @@ def extraire(champ, texte: str, langue: str = "fr"):
 # Ne doit être appelé que si extraire() a renvoyé None, et uniquement
 # pour renvoyer une valeur du domaine du champ. Jamais pour décider.
 # --------------------------------------------------------------------------
+
+_TRANCHES = [(5, "moins de 5 ans"), (15, "5 a 15 ans"),
+             (60, "15 a 60 ans"), (200, "plus de 60 ans")]
+_MOTS_AGE = {"un":1,"deux":2,"trois":3,"quatre":4,"cinq":5,"six":6,"sept":7,
+             "huit":8,"neuf":9,"dix":10,"vingt":20,"trente":30,"quarante":40,
+             "cinquante":50,"soixante":60,
+             "benn":1,"naar":2,"nett":3,"nent":4,"juroom":5}
+
+
+def extraire_age(texte: str, options: list) -> str | None:
+    """L'âge pilote la règle d'alerte la plus importante (< 5 ans).
+    On lit un nombre puis on le range dans une tranche, plutôt que
+    d'apparier la phrase au libellé de l'option."""
+    t = _simplifier(texte)
+    for opt in options:                    # libellé exact : pastille ou saisie
+        if _simplifier(opt) in t:
+            return opt
+    if re.search(r"\b(bebe|nourrisson)\b", t):
+        return "moins de 5 ans"
+    if re.search(r"\b\d{1,2}\s*(mois|weer)\b", t):
+        return "moins de 5 ans"
+    m = re.search(r"\b(\d{1,3})\s*(ans?|at)\b", t) or re.search(r"\b(\d{1,3})\b", t)
+    n = int(m.group(1)) if m else None
+    if n is None:
+        for mot, val in _MOTS_AGE.items():
+            if re.search(rf"\b{mot}\s+(ans?|at)\b", t):
+                n = val
+                break
+    if n is None:
+        return None
+    for seuil, label in _TRANCHES:
+        if n < seuil:
+            return label
+    return "plus de 60 ans"
 
 def extraire_par_llm(champ, texte: str) -> str | None:
     """
@@ -203,16 +239,20 @@ def extraire_duree_explicite(texte: str) -> int | None:
         elif unite.startswith("mois"):
             n *= 30
         return n
-    # Formes wolof et françaises en toutes lettres, avec unité obligatoire.
-    for mot, val in {"benn": 1, "naar": 2, "nett": 3, "nent": 4, "juroom": 5,
-                     "un": 1, "deux": 2, "trois": 3, "quatre": 4, "cinq": 5}.items():
-        if re.search(rf"\b{mot}\s+(jour|jours|fan|bes)\b", t):
+    # Formes en toutes lettres, avec unité obligatoire.
+    _MOTS = {"benn": 1, "naar": 2, "nett": 3, "nent": 4, "juroom": 5,
+                "un": 1, "une": 1, "deux": 2, "trois": 3, "quatre": 4, "cinq": 5,
+                "six": 6, "sept": 7, "huit": 8, "neuf": 9, "dix": 10}
+    for mot, val in _MOTS.items():
+        mm = re.search(
+            rf"\b{mot}\s+(jour|jours|semaine|semaines|mois|fan|bes)\b", t)
+        if mm:
+            unite = mm.group(1)
+            if unite.startswith("semaine"):
+                val *= 7
+            elif unite.startswith("mois"):
+                val *= 30
             return val
-    if re.search(r"\b(aujourd hui|tey)\b", t):
-        return 0
-    if re.search(r"\b(hier|demb)\b", t):
-        return 1
-    return None
 
 
 def extraire_tout(texte: str, dossier: dict, champs) -> dict:

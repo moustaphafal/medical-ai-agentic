@@ -19,6 +19,7 @@ MODE_SIMULE = os.environ.get("STT_SIMULE", "1") == "1"
 _whisper = None
 _mms_modele = None
 _mms_proc = None
+_wolof_pipe = None
 
 
 # --------------------------------------------------------------------------
@@ -72,14 +73,25 @@ def _get_whisper():
         print("[STT] français prêt")
     return _whisper
 
+def _get_wolof():
+    global _wolof_pipe
+    if _wolof_pipe is None:
+        from transformers import pipeline
+        print("[STT] chargement du modèle wolof…")
+        _wolof_pipe = pipeline(
+            "automatic-speech-recognition",
+            model="M9and2M/whisper-small-wolof",
+            device=-1,
+        )
+        print("[STT] wolof prêt")
+    return _wolof_pipe
 
 def _get_mms():
     global _mms_modele, _mms_proc
     if _mms_modele is None:
-        import torch
         from transformers import AutoProcessor, Wav2Vec2ForCTC
         print("[STT] chargement du modèle wolof…")
-        mid = "bilalfaye/wav2vec2-large-mms-1b-wolof"
+        mid = "speechbrain/asr-wav2vec2-dvoice-wolof"
         _mms_proc = AutoProcessor.from_pretrained(mid)
         _mms_modele = Wav2Vec2ForCTC.from_pretrained(mid).to("cpu").eval()
         print("[STT] wolof prêt")
@@ -96,14 +108,17 @@ def _transcrire_fr(chemin_wav: str) -> str:
     return " ".join(s.text for s in segments).strip()
 
 
-def _transcrire_wo(chemin_wav: str) -> str:
+""" def _transcrire_wo(chemin_wav: str) -> str:
     import torch
     modele, proc = _get_mms()
     wav = charger_audio(chemin_wav)
     x = proc(wav, sampling_rate=16000, return_tensors="pt")
     with torch.no_grad():
         logits = modele(**x).logits
-    return proc.decode(logits.argmax(-1)[0]).strip()
+    return proc.decode(logits.argmax(-1)[0]).strip() """
+
+def _transcrire_wo(chemin_wav: str) -> str:
+    return _get_wolof()(chemin_wav, chunk_length_s=30)["text"].strip()
 
 
 def transcrire(chemin_audio: str, langue: str = "fr") -> str:

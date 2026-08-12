@@ -342,15 +342,22 @@ async function rafraichirTrace(){
 
     const r=$('regles'); r.innerHTML='';
     const regles = t.regles_declenchees||[];
-    if(!regles.length){
-      r.innerHTML='<p class="empty">Aucune règle d\'alerte active.</p>';
-    } else {
+    if(regles.length){
       regles.forEach(g=>{
         const el=document.createElement('div');
         el.className='rule '+(g.niveau==='urgent'?'urgent':'oriente');
         el.innerHTML=g.libelle+'<code>'+g.code+'</code>';
         r.appendChild(el);
       });
+    } else if(t.conclusion && (t.conclusion.alertes||[]).length){
+      t.conclusion.alertes.forEach(a=>{
+        const el=document.createElement('div');
+        el.className='rule oriente';
+        el.innerHTML=a+'<code>motif de la décision</code>';
+        r.appendChild(el);
+      });
+    } else {
+      r.innerHTML='<p class="empty">Aucune règle d\'alerte active.</p>';
     }
   }catch(e){ /* la trace est secondaire */ }
 }
@@ -373,6 +380,11 @@ $('txt').addEventListener('keydown',e=>{ if(e.key==='Enter') envoyerTexte($('txt
 
 async function envoyerAudio(blob){
   if(!sid) return;
+  if(blob.size < 8000){
+    erreur("Enregistrement trop court. Parlez plus longuement.");
+    return;
+  }
+  const t0 = performance.now();
   $('eyebrow').textContent='Transcription en cours…';
   $('hint').textContent='Analyse de votre réponse…';
   const fd=new FormData();
@@ -381,6 +393,9 @@ async function envoyerAudio(blob){
     const r = await fetch(API+'/session/'+sid+'/audio',{method:'POST', body:fd});
     if(!r.ok) throw new Error('HTTP '+r.status);
     erreur(''); afficher(await r.json());
+    const s = ((performance.now()-t0)/1000).toFixed(1);
+    $('hint').textContent = 'Réponse en '+s+' s. Appuyez pour parler.';
+    return;
   }catch(e){
     erreur("La transcription a échoué. Utilisez le champ texte ci-dessous.");
   }

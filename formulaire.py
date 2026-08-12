@@ -22,7 +22,10 @@ class Entree:
     contre_indications: list = field(default_factory=list)
     duree_max_jours: int = 3
     conseils: list = field(default_factory=list)
+    source: str = ""
+    statut: str = "brouillon"     # "valide" seulement après relecture humaine
 
+MODE_STRICT = True
 
 FORMULAIRE = [
     Entree(
@@ -32,8 +35,10 @@ FORMULAIRE = [
         motifs={"cephalee", "fievre_palu", "respiratoire", "abdominal"},
         posologie={
             "5 a 15 ans": "15 mg/kg toutes les 6 heures, sans dépasser 4 prises par jour",
-            "15 a 60 ans": "1 g toutes les 6 heures, sans dépasser 3 g par jour",
+            "15 a 60 ans": "1 g toutes les 6 heures, sans dépasser 4 g par jour",
+            # A partir de 15 ans et +, la posologie est la meme.
             "plus de 60 ans": "500 mg à 1 g toutes les 8 heures, sans dépasser 2 g par jour",
+            # A changer, pour plus de 60 ans, la posologie est la meme que pour les adultes. Prendre ce cas que si le patient a des problemes de foie ou de rein (cas spécifique).
         },
         contre_indications=["Maladie du foie connue", "Allergie au paracétamol"],
         duree_max_jours=3,
@@ -57,7 +62,7 @@ FORMULAIRE = [
         code="REPOS_HYDR",
         principe_actif="Mesures non médicamenteuses",
         indication="Symptômes bénins ne justifiant pas de traitement",
-        motifs={"cephalee", "respiratoire", "fievre_palu", "abdominal", "diarrhee"},
+        motifs={"cephalee", "diarrhee"},
         posologie={
             "5 a 15 ans": "Repos, hydratation régulière",
             "15 a 60 ans": "Repos, hydratation régulière",
@@ -88,3 +93,10 @@ def rendre(entree: Entree, age_tranche: str) -> dict:
         "contre_indications": entree.contre_indications,
         "conseils": entree.conseils,
     }
+
+def candidats(motif: str, age_tranche: str) -> list:
+    eligibles = [e for e in FORMULAIRE
+                 if motif in e.motifs and age_tranche in e.posologie]
+    if MODE_STRICT:
+        eligibles = [e for e in eligibles if e.statut == "valide"]
+    return eligibles
