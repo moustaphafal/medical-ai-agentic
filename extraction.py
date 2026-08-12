@@ -34,6 +34,15 @@ def phonetiser(s: str) -> str:
     s = re.sub(r"(.)\1+", r"\1", s)
     return re.sub(r"\s+", " ", s).strip()
 
+def _simplifier(s: str) -> str:
+    """Normalisation SANS substitution phonétique.
+    phonetiser() est fait pour l'appariement flou de mots-clés :
+    il transforme 'deux jours' en 'teux cours' et casse toute regex."""
+    s = str(s).lower().strip().replace("ŋ", "n").replace("ñ", "n")
+    s = unicodedata.normalize("NFD", s)
+    s = "".join(c for c in s if unicodedata.category(c) != "Mn")
+    s = re.sub(r"[^a-z0-9\s]", " ", s)
+    return re.sub(r"\s+", " ", s).strip()
 
 def contient(mot_cle: str, transcription: str, seuil: int = SEUIL) -> bool:
     """Appariement token à token, avec récupération des coupures de mots."""
@@ -184,7 +193,7 @@ _MOTIF_DUREE = re.compile(
 
 
 def extraire_duree_explicite(texte: str) -> int | None:
-    t = phonetiser(texte)
+    t = _simplifier(texte)
     m = _MOTIF_DUREE.search(t)
     if m:
         n = int(m.group(1))

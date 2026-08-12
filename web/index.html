@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agent de triage — Consultation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0B2027;
+  --ink-2:#14323C;
+  --bone:#F5F2EC;
+  --bone-2:#EAE5DB;
+  --line:#C9C3B6;
+  --muted:#6E7A76;
+  --vert:#2F7D5C;
+  --ambre:#C8801E;
+  --rouge:#B3382C;
+  --sans:'IBM Plex Sans',ui-sans-serif,system-ui,'Segoe UI',sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,'Cascadia Mono',Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:var(--sans);
+  background:var(--ink);
+  color:var(--bone);
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ---------- structure ---------- */
+.shell{max-width:1180px;margin:0 auto;padding:28px 24px 64px;}
+header{display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;
+  padding-bottom:18px;border-bottom:1px solid rgba(201,195,182,.22);}
+.mark{font-size:20px;font-weight:600;letter-spacing:-.01em}
+.sub{font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:#8FA39D}
+.spacer{flex:1}
+
+.grid{display:grid;grid-template-columns:1fr 372px;gap:22px;margin-top:26px;align-items:start}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+
+/* ---------- panneau principal ---------- */
+.stage{
+  background:var(--bone);color:var(--ink);
+  border-radius:4px;padding:34px 34px 28px;min-height:430px;
+  display:flex;flex-direction:column;
+}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.question{font-size:31px;line-height:1.22;font-weight:600;letter-spacing:-.02em;
+  min-height:76px}
+.heard{margin-top:22px;padding:13px 15px;background:var(--bone-2);
+  border-left:3px solid var(--ink-2);font-family:var(--mono);font-size:14px;
+  line-height:1.5;display:none}
+.heard b{font-weight:500;color:var(--muted);display:block;font-size:10px;
+  letter-spacing:.14em;text-transform:uppercase;margin-bottom:5px}
+
+.controls{margin-top:auto;padding-top:26px}
+.mic-row{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.mic{
+  width:82px;height:82px;border-radius:50%;border:none;cursor:pointer;
+  background:var(--ink);color:var(--bone);display:grid;place-items:center;
+  transition:transform .12s ease, background .2s ease;flex:none;
+}
+.mic:hover{transform:scale(1.04)}
+.mic:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.mic.rec{background:var(--rouge);animation:pulse 1.3s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(179,56,44,.5)}
+  50%{box-shadow:0 0 0 15px rgba(179,56,44,0)}}
+.mic svg{width:31px;height:31px}
+.hint{font-size:14px;color:var(--muted);line-height:1.45}
+
+.fallback{margin-top:18px;display:flex;gap:9px}
+.fallback input{
+  flex:1;padding:11px 13px;border:1px solid var(--line);border-radius:3px;
+  font-family:var(--sans);font-size:15px;background:#fff;color:var(--ink)}
+.fallback input:focus{outline:2px solid var(--ink-2);outline-offset:-1px}
+.fallback button{
+  padding:11px 19px;border:1px solid var(--ink);background:var(--ink);
+  color:var(--bone);border-radius:3px;cursor:pointer;font-family:var(--sans);
+  font-size:14px;font-weight:500}
+.chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.chip{padding:6px 13px;border:1px solid var(--line);border-radius:99px;
+  background:#fff;font-size:13px;cursor:pointer;color:var(--ink);
+  font-family:var(--sans)}
+.chip:hover{border-color:var(--ink);background:var(--bone-2)}
+
+/* ---------- conclusion ---------- */
+.verdict{display:none;border-radius:4px;padding:26px 28px;color:#fff;margin-top:2px}
+.verdict.benin{background:var(--vert)}
+.verdict.oriente{background:var(--ambre)}
+.verdict.urgent{background:var(--rouge)}
+.verdict .tag{font-family:var(--mono);font-size:11px;letter-spacing:.16em;
+  text-transform:uppercase;opacity:.82;margin-bottom:10px}
+.verdict .msg{font-size:22px;line-height:1.34;font-weight:500}
+.verdict ul{margin:16px 0 0 17px;font-size:14px;line-height:1.7;opacity:.94}
+
+/* ---------- dossier ---------- */
+.side{display:flex;flex-direction:column;gap:14px}
+.card{background:var(--ink-2);border-radius:4px;padding:20px 20px 18px}
+.card h2{font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:#8FA39D;font-weight:500;margin-bottom:14px}
+.empty{font-size:13px;color:#7C8E89;line-height:1.5}
+.row{display:flex;justify-content:space-between;gap:12px;padding:7px 0;
+  border-bottom:1px solid rgba(201,195,182,.11);font-size:13px}
+.row:last-child{border-bottom:none}
+.row .k{font-family:var(--mono);color:#8FA39D;font-size:12px}
+.row .v{text-align:right;font-weight:500}
+.row .v.inconnu{color:var(--ambre)}
+.row .k::after{content:'';display:inline-block}
+.row.deduit .k::after{content:' ·déduit';color:var(--vert);font-size:10px;
+  letter-spacing:.05em}
+
+.rule{display:block;padding:9px 12px;border-radius:3px;margin-bottom:7px;
+  font-size:13px;line-height:1.35;border-left:3px solid}
+.rule.urgent{background:rgba(179,56,44,.16);border-color:var(--rouge)}
+.rule.oriente{background:rgba(200,128,30,.14);border-color:var(--ambre)}
+.rule code{font-family:var(--mono);font-size:11px;opacity:.62;display:block;
+  margin-top:3px}
+
+.foot{display:flex;gap:9px;margin-top:16px;flex-wrap:wrap}
+.ghost{padding:9px 15px;border:1px solid rgba(201,195,182,.32);background:none;
+  color:var(--bone);border-radius:3px;cursor:pointer;font-family:var(--sans);
+  font-size:13px}
+.ghost:hover{border-color:var(--bone)}
+.ghost[aria-pressed="true"]{background:var(--bone);color:var(--ink);
+  border-color:var(--bone)}
+
+.err{background:var(--rouge);color:#fff;padding:12px 15px;border-radius:3px;
+  font-size:14px;margin-top:14px;display:none;line-height:1.45}
+:focus-visible{outline:2px solid #7FD8C0;outline-offset:2px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<header>
+  <div>
+    <div class="mark">Agent de triage médical</div>
+    <div class="sub">Premier niveau · français &amp; wolof</div>
+  </div>
+  <div class="spacer"></div>
+  <div class="foot" style="margin:0">
+    <button class="ghost" id="btn-fr" aria-pressed="true">Français</button>
+    <button class="ghost" id="btn-wo" aria-pressed="false">Wolof</button>
+    <button class="ghost" id="btn-new">Nouvelle consultation</button>
+  </div>
+</header>
+
+<div class="grid">
+
+  <main>
+    <section class="stage" id="stage">
+      <div class="eyebrow" id="eyebrow">Prêt</div>
+      <div class="question" id="question">Choisissez une langue, puis appuyez sur le micro pour décrire vos symptômes.</div>
+
+      <div class="heard" id="heard"><b>Transcription</b><span id="heard-txt"></span></div>
+
+      <div class="controls">
+        <div class="mic-row">
+          <button class="mic" id="mic" aria-label="Enregistrer la réponse">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="2" width="6" height="12" rx="3"/>
+              <path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v4"/>
+            </svg>
+          </button>
+          <div class="hint" id="hint">Appuyez pour parler. Appuyez à nouveau pour envoyer.</div>
+        </div>
+
+        <div class="chips" id="chips"></div>
+
+        <div class="fallback">
+          <input id="txt" placeholder="Ou tapez votre réponse ici" autocomplete="off">
+          <button id="send">Envoyer</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="verdict" id="verdict">
+      <div class="tag" id="verdict-tag"></div>
+      <div class="msg" id="verdict-msg"></div>
+      <ul id="verdict-list"></ul>
+    </div>
+
+    <div class="err" id="err"></div>
+  </main>
+
+  <aside class="side">
+    <div class="card">
+      <h2>Dossier de consultation</h2>
+      <div id="dossier"><p class="empty">Les informations recueillies apparaîtront ici au fil de l'entretien.</p></div>
+    </div>
+    <div class="card">
+      <h2>Règles déclenchées</h2>
+      <div id="regles"><p class="empty">Aucune règle d'alerte active.</p></div>
+    </div>
+  </aside>
+
+</div>
+</div>
+
+<script>
+const API = location.origin;
+let sid = null, langue = 'fr', rec = null, chunks = [], enCours = false;
+
+const $ = id => document.getElementById(id);
+const ETIQ = {
+  motif_principal:'Motif', age_tranche:'Âge', sexe:'Sexe', grossesse:'Grossesse',
+  duree_jours:'Durée (jours)', fievre:'Fièvre', dyspnee:'Respiration',
+  conscience_alteree:'Conscience', saignement:'Saignement', vomissements:'Vomissements',
+  antecedents:'Antécédents', echec_automedication:'Automédication',
+  selles_par_jour:'Selles / jour', deshydratation:'Déshydratation',
+  douleur_thoracique:'Douleur thoracique', raideur_nuque:'Nuque', localite:'Localité'
+};
+const MOTIFS = {
+  fievre_palu:'Fièvre / paludisme', diarrhee:'Diarrhée', respiratoire:'Toux',
+  abdominal:'Douleur abdominale', cephalee:'Céphalée'
+};
+
+function erreur(msg){ const e=$('err'); e.textContent=msg; e.style.display=msg?'block':'none'; }
+
+/* ---------- langue ---------- */
+function setLangue(l){
+  langue=l;
+  $('btn-fr').setAttribute('aria-pressed', l==='fr');
+  $('btn-wo').setAttribute('aria-pressed', l==='wo');
+  $('txt').placeholder = l==='fr' ? 'Ou tapez votre réponse ici' : 'Walla bind sa tontu fi';
+  demarrer();
+}
+$('btn-fr').onclick=()=>setLangue('fr');
+$('btn-wo').onclick=()=>setLangue('wo');
+$('btn-new').onclick=()=>demarrer();
+
+/* ---------- session ---------- */
+async function demarrer(){
+  erreur(''); sid=null;
+  $('verdict').style.display='none';
+  $('heard').style.display='none';
+  $('dossier').innerHTML='<p class="empty">Les informations recueillies apparaîtront ici au fil de l\'entretien.</p>';
+  $('regles').innerHTML='<p class="empty">Aucune règle d\'alerte active.</p>';
+  $('eyebrow').textContent='Ouverture de la consultation';
+  $('question').textContent='…';
+  try{
+    const r = await fetch(API+'/session',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({langue, localite:'Dakar'})
+    });
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    afficher(await r.json());
+  }catch(e){
+    erreur("Le serveur ne répond pas. Vérifiez qu'uvicorn tourne sur le port 8000.");
+    $('question').textContent='Serveur indisponible';
+  }
+}
+
+function afficher(d){
+  sid = d.session_id;
+  $('question').textContent = d.texte || '';
+  $('eyebrow').textContent = d.terminee ? 'Consultation terminée'
+    : (d.champ ? 'Question · '+(ETIQ[d.champ]||d.champ) : 'Entretien');
+
+  if(d.transcription){
+    $('heard-txt').textContent = d.transcription;
+    $('heard').style.display='block';
+  }
+
+  // suggestions de réponse
+  const c=$('chips'); c.innerHTML='';
+  if(!d.terminee && d.options && d.options.length && d.options.length<=4){
+    d.options.forEach(o=>{
+      const b=document.createElement('button');
+      b.className='chip'; b.textContent = MOTIFS[o]||o;
+      b.onclick=()=>envoyerTexte(o);
+      c.appendChild(b);
+    });
+  }
+
+  $('mic').disabled = d.terminee;
+  $('txt').disabled = d.terminee;
+  $('send').disabled = d.terminee;
+
+  parler(d);
+  if(d.terminee) conclure(d.conclusion);
+  rafraichirTrace();
+}
+
+function parler(d){
+  if(d.audio_wav_b64){
+    new Audio('data:audio/wav;base64,'+d.audio_wav_b64).play().catch(()=>{});
+  } else if(langue==='fr' && 'speechSynthesis' in window && d.texte){
+    speechSynthesis.cancel();
+    const u=new SpeechSynthesisUtterance(d.texte);
+    u.lang='fr-FR'; u.rate=1.0;
+    speechSynthesis.speak(u);
+  }
+}
+
+function conclure(c){
+  if(!c) return;
+  const v=$('verdict');
+  const urgent = c.niveau==='urgent';
+  v.className='verdict '+(c.decision==='orientation' ? (urgent?'urgent':'oriente') : 'benin');
+  $('verdict-tag').textContent = c.decision==='orientation'
+    ? (urgent?'Orientation urgente':'Orientation') : 'Cas bénin';
+  $('verdict-msg').textContent = $('question').textContent;
+  const ul=$('verdict-list'); ul.innerHTML='';
+  (c.alertes||[]).forEach(a=>{
+    const li=document.createElement('li'); li.textContent=a; ul.appendChild(li);
+  });
+  v.style.display='block';
+  v.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+/* ---------- trace ---------- */
+async function rafraichirTrace(){
+  if(!sid) return;
+  try{
+    const t = await (await fetch(API+'/session/'+sid+'/trace')).json();
+    const deduits = new Set((t.evenements||[])
+      .filter(e=>e.evenement==='champ_deduit').map(e=>e.champ));
+
+    const d=$('dossier'); d.innerHTML='';
+    const entrees = Object.entries(t.dossier||{});
+    if(!entrees.length){
+      d.innerHTML='<p class="empty">Aucune information recueillie pour le moment.</p>';
+    } else {
+      entrees.forEach(([k,v])=>{
+        if(v===null||v===undefined) return;
+        const row=document.createElement('div');
+        row.className='row'+(deduits.has(k)?' deduit':'');
+        const val = MOTIFS[v] || v;
+        row.innerHTML='<span class="k">'+(ETIQ[k]||k)+'</span>'+
+          '<span class="v'+(v==='inconnu'?' inconnu':'')+'">'+val+'</span>';
+        d.appendChild(row);
+      });
+    }
+
+    const r=$('regles'); r.innerHTML='';
+    const regles = t.regles_declenchees||[];
+    if(!regles.length){
+      r.innerHTML='<p class="empty">Aucune règle d\'alerte active.</p>';
+    } else {
+      regles.forEach(g=>{
+        const el=document.createElement('div');
+        el.className='rule '+(g.niveau==='urgent'?'urgent':'oriente');
+        el.innerHTML=g.libelle+'<code>'+g.code+'</code>';
+        r.appendChild(el);
+      });
+    }
+  }catch(e){ /* la trace est secondaire */ }
+}
+
+/* ---------- réponses ---------- */
+async function envoyerTexte(texte){
+  if(!sid || !texte.trim()) return;
+  $('txt').value='';
+  try{
+    const r = await fetch(API+'/session/'+sid+'/texte',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({texte})
+    });
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    erreur(''); afficher(await r.json());
+  }catch(e){ erreur("Réponse non transmise. Réessayez."); }
+}
+$('send').onclick=()=>envoyerTexte($('txt').value);
+$('txt').addEventListener('keydown',e=>{ if(e.key==='Enter') envoyerTexte($('txt').value); });
+
+async function envoyerAudio(blob){
+  if(!sid) return;
+  $('eyebrow').textContent='Transcription en cours…';
+  $('hint').textContent='Analyse de votre réponse…';
+  const fd=new FormData();
+  fd.append('fichier', blob, 'reponse.webm');
+  try{
+    const r = await fetch(API+'/session/'+sid+'/audio',{method:'POST', body:fd});
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    erreur(''); afficher(await r.json());
+  }catch(e){
+    erreur("La transcription a échoué. Utilisez le champ texte ci-dessous.");
+  }
+  $('hint').textContent='Appuyez pour parler. Appuyez à nouveau pour envoyer.';
+}
+
+/* ---------- micro ---------- */
+$('mic').onclick = async () => {
+  if(enCours){
+    rec.stop(); enCours=false;
+    $('mic').classList.remove('rec');
+    return;
+  }
+  try{
+    const flux = await navigator.mediaDevices.getUserMedia({audio:true});
+    rec = new MediaRecorder(flux); chunks=[];
+    rec.ondataavailable = e => chunks.push(e.data);
+    rec.onstop = () => {
+      flux.getTracks().forEach(t=>t.stop());
+      envoyerAudio(new Blob(chunks,{type:'audio/webm'}));
+    };
+    rec.start(); enCours=true;
+    $('mic').classList.add('rec');
+    $('hint').textContent='Enregistrement… appuyez pour envoyer.';
+    erreur('');
+  }catch(e){
+    erreur("Micro inaccessible. Autorisez le microphone, ou tapez votre réponse.");
+  }
+};
+
+demarrer();
+</script>
+</body>
+</html>

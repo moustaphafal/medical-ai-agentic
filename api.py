@@ -39,6 +39,15 @@ def demarrage():
     tts.charger_modeles()
 
 
+# Interface de démonstration servie par l'API elle-même.
+# Indispensable : getUserMedia (micro) exige un contexte sécurisé, ce que
+# file:// n'est pas. Servie depuis localhost, le micro fonctionne.
+_web = Path(__file__).parent / "web"
+if _web.is_dir():
+    from fastapi.staticfiles import StaticFiles
+    app.mount("/app", StaticFiles(directory=str(_web), html=True), name="web")
+
+
 # --------------------------------------------------------------------------
 # Modèles d'échange
 # --------------------------------------------------------------------------
