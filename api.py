@@ -18,6 +18,7 @@ from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+import config  # noqa: F401  — charge .env avant la lecture de STT_SIMULE/TTS_SIMULE
 from orchestrateur import Session
 from services import stt, tts
 

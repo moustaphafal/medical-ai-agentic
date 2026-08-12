@@ -80,6 +80,36 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 ```
 
+### Configuration — fichier `.env`
+
+Copiez le modèle fourni et remplissez-le :
+
+```bash
+cp .env.example .env          # macOS / Linux
+copy .env.example .env        # Windows
+```
+
+`.env` est ignoré par git : vos clés n'y seront jamais commitées. Le fichier
+est chargé automatiquement par `config.py`, sans dépendance externe. Une
+variable déjà définie dans votre shell l'emporte toujours sur le fichier.
+
+| Variable | Rôle | Obligatoire |
+|---|---|---|
+| `GROQ_API_KEY` | Secours d'extraction pour les réponses en wolof | non |
+| `HF_TOKEN` | Téléchargement d'un modèle Hugging Face à accès restreint | non |
+| `STT_SIMULE` | `1` simulé, `0` modèles réels | non, défaut `1` |
+| `TTS_SIMULE` | `1` simulé, `0` modèles réels | non, défaut `1` |
+
+Vérifier ce qui est effectivement chargé, sans afficher les secrets :
+
+```bash
+python config.py
+```
+
+**Sans `GROQ_API_KEY`, l'agent fonctionne normalement** : le secours par modèle
+de langage est simplement désactivé, et l'agent relance sa question quand il ne
+comprend pas.
+
 ### Pourquoi les versions sont figées
 
 `requirements.txt` épingle `torch==2.5.1`, `ctranslate2==4.4.0`,
@@ -141,8 +171,8 @@ testable. C'est le mode adapté au développement et aux tests.
 [TTS] mode simulé — aucun modèle chargé
 ```
 
-Pour activer les vrais modèles, positionnez les variables d'environnement avant
-le lancement :
+Pour activer les vrais modèles, passez `STT_SIMULE=0` et `TTS_SIMULE=0` dans
+votre `.env`, ou positionnez-les dans le shell avant le lancement :
 
 ```powershell
 $env:STT_SIMULE = "0"; $env:TTS_SIMULE = "0"    # Windows PowerShell
@@ -229,7 +259,9 @@ alertes.py           16 règles déterministes de signe d'alerte
 extraction.py        compréhension des réponses en parole libre
 formulaire.py        sélection du traitement dans la liste fermée
 api.py               API HTTP + service de l'interface web
+config.py            chargement du .env, sans dépendance
 demo.py              console interactive et jeu de tests
+test_llm.py          garde-fous et qualité du secours par modèle
 services/stt.py      transcription fr/wo
 services/tts.py      synthèse vocale wolof
 web/index.html       interface de démonstration
@@ -241,12 +273,19 @@ donnees/             contenu clinique sourcé + contrôleur de complétude
 ## Vérifier une installation
 
 ```bash
-python demo.py test          # 7/7 cas réussis
+python demo.py test          # cas de triage de bout en bout
 python donnees/charger.py    # rapport de complétude des données
+python test_llm.py           # garde-fous du secours par modèle de langage
+python config.py             # variables chargées depuis .env
 ```
 
-Si les deux passent, l'installation est saine — même sans ffmpeg ni modèles,
-qui ne concernent que la voix.
+`test_llm.py` sépare deux choses : des tests de **sûreté** bloquants, qui
+tournent sans clé ni réseau et vérifient qu'aucune valeur hors domaine ne peut
+passer, et des tests de **qualité** wolof, purement informatifs, qui n'échouent
+jamais la suite — la sortie d'un modèle n'est pas une garantie.
+
+Ces vérifications fonctionnent même sans ffmpeg ni modèles vocaux, qui ne
+concernent que la voix.
 
 ---
 

@@ -16,6 +16,8 @@ import unicodedata
 import urllib.request
 from rapidfuzz import fuzz
 
+import config  # noqa: F401  — charge .env dans os.environ dès l'import
+
 SEUIL = 85
 
 
@@ -219,6 +221,7 @@ def extraire_age(texte: str, options: list) -> str | None:
 _GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 _GROQ_MODELE = "llama-3.1-8b-instant"
 _GROQ_TIMEOUT = 6
+_AGENT = "medical-ai-agentic/1.0 (+https://github.com/moustaphafal/medical-ai-agentic)"
 
 # Valeurs renvoyées par le modèle mais refusées par le garde-fou.
 # Diagnostic uniquement : rien dans le triage ne lit cette liste.
@@ -241,6 +244,10 @@ Règles absolues :
 - NE JAMAIS déduire une négation d'un silence. Si le patient ne mentionne pas
   un symptôme, ce n'est PAS un "non" : c'est null. L'absence d'information
   n'est jamais une réponse négative.
+- Ne confonds pas TON incertitude avec celle du patient. Si le patient déclare
+  explicitement qu'il ne sait pas ("xamuma", "je ne sais pas", "je ne suis pas
+  sûr") et que "je ne sais pas" figure dans les options, choisis cette option :
+  c'est une réponse, pas une absence de réponse.
 
 Exemples.
 
@@ -298,7 +305,10 @@ def extraire_par_llm(champ, texte: str, langue: str = "fr") -> str | None:
     requete = urllib.request.Request(
         _GROQ_URL, data=corps, method="POST",
         headers={"Content-Type": "application/json",
-                 "Authorization": f"Bearer {cle}"},
+                 "Authorization": f"Bearer {cle}",
+                 # Sans User-Agent explicite, urllib s'annonce « Python-urllib »
+                 # et le pare-feu de Groq renvoie un 403 (Cloudflare 1010).
+                 "User-Agent": _AGENT},
     )
 
     try:

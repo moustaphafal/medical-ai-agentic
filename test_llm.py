@@ -142,6 +142,17 @@ CAS_WOLOF = [
     ("fievre",      "xamuma",                   "je ne sais pas"),
 ]
 
+# Le patient ne répond PAS à la question posée. Attendu : None, jamais "non".
+# Ces cas gardent la règle la plus importante du prompt : une absence
+# d'information n'est jamais une réponse négative. À relancer après toute
+# modification de _INSTRUCTION.
+CAS_SILENCE = [
+    ("fievre",     "sama bopp dafa metti"),          # parle de sa tête
+    ("fievre",     "naka nga def"),                  # salutation, hors sujet
+    ("dyspnee",    "sama biir dafa metti"),          # parle du ventre
+    ("sexe",       "waaw"),                          # « oui » ne dit pas le sexe
+]
+
 BUDGET_LATENCE = 2.0        # secondes ; au-delà, on le signale
 
 
@@ -176,6 +187,17 @@ def qualite_wolof():
         if moyenne > BUDGET_LATENCE:
             print(f"  ATTENTION : la latence moyenne depasse {BUDGET_LATENCE}s.")
             print("  Budget total 12s par tour, dont ~7s de transcription.")
+
+    print("\n  Regle du silence — une non-reponse ne doit jamais donner 'non' :")
+    for nom_champ, texte in CAS_SILENCE:
+        try:
+            obtenu = extraction.extraire_par_llm(CHAMPS[nom_champ], texte,
+                                                 langue="wo")
+        except Exception as e:
+            print(f"    ERREUR INATTENDUE {nom_champ} <- {texte!r} : {e!r}")
+            continue
+        alerte = "  <-- REGRESSION" if obtenu == "non" else ""
+        print(f"    {nom_champ:12} {texte!r:40} -> {obtenu!r}{alerte}")
 
     if extraction.REJETS_LLM:
         print("\n  Valeurs refusees par le garde-fou :")
