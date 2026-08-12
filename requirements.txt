@@ -8,9 +8,6 @@ python-multipart
 
 # Transcription — membre 2
 transformers
-
-# 2.13 échoue au chargement des DLL (WinError 1114) sur CPU Intel Comet Lake
-
 soundfile
 librosa
 # Versions figées : les builds récents plantent silencieusement

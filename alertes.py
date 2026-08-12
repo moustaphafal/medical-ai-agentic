@@ -69,6 +69,15 @@ REGLES = [
 
     Alerte("duree_longue", "Symptômes évoluant depuis plus de 7 jours", ORIENTE,
            lambda d: _entier(d, "duree_jours") > 7),
+
+    Alerte("tdr_systematique",
+           "Fièvre : test de diagnostic rapide du paludisme requis (PNLP)", ORIENTE,
+           lambda d: _oui(d, "fievre")),
+
+    Alerte("toux_plus_3_semaines",
+           "Toux depuis plus de 3 semaines — dépistage tuberculose (PNT)", ORIENTE,
+           lambda d: d.get("motif_principal") == "respiratoire"
+                     and _entier(d, "duree_jours") > 21),
 ]
 
 

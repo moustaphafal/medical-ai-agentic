@@ -1,9 +1,26 @@
 {
   "_lisez_moi": {
     "objet": "Signes d'alerte. Règles déterministes évaluées à chaque tour, jamais confiées au modèle de langage.",
-    "correspondance": "Le champ 'code' doit correspondre exactement à un code présent dans alertes.py. Ce fichier documente et source les règles ; alertes.py les exécute.",
-    "volume_cible": "14 règles, soit celles déjà codées dans alertes.py.",
-    "conseil": "Les signes d'alerte sont largement universels : recomedicales.fr est une bonne source pour cette partie, contrairement aux posologies."
+    "correspondance": "Ce fichier documente et source les règles ; alertes.py les exécute. Il contient deux catégories d'entrées : celles dont le 'code' correspond à une règle implémentée dans alertes.py, et celles issues des sources mais pas encore codées. Ces dernières sont sans effet sur le triage tant qu'aucune règle ne porte leur code.",
+    "volume_cible": "31 règles au total : 16 codées dans alertes.py et 15 documentées mais non implémentées.",
+    "conseil": "Les signes d'alerte sont largement universels : recomedicales.fr est une bonne source pour cette partie, contrairement aux posologies.",
+    "regles_non_implementees": [
+      "cephalee_brutale",
+      "cephalee_nouvelle_apres_50_ans",
+      "cephalee_post_traumatique",
+      "defense_abdominale",
+      "deficit_neurologique",
+      "diarrhee_persistante",
+      "douleur_fosse_iliaque_droite",
+      "hemoglobinurie",
+      "hypertension_intracranienne",
+      "ictere",
+      "nourrisson_moins_6_mois",
+      "occlusion",
+      "oedeme_pulmonaire",
+      "prostration",
+      "signes_de_choc"
+    ]
   },
   "regles": [
     {
@@ -232,11 +249,11 @@
         "consulte_le": "2026-08-12"
       },
       "validation": {
-        "statut": "valide",
-        "par": "Source institutionnelle",
-        "qualite": "Document officiel MSAS/gouvernement",
-        "date": "2026-08-12",
-        "commentaire": "Le principe d'orientation devant une fièvre persistante est appuyé par la source, mais le seuil de 3 jours codé dans alertes.py n'y figure pas : il relève d'un choix d'implémentation, à faire trancher par un médecin."
+        "statut": "brouillon",
+        "par": "",
+        "qualite": "",
+        "date": "",
+        "commentaire": "Concept sourcé, seuil numérique non sourcé — choix d'implémentation à valider cliniquement."
       }
     },
     {
@@ -257,11 +274,11 @@
         "consulte_le": "2026-08-12"
       },
       "validation": {
-        "statut": "valide",
-        "par": "Source institutionnelle",
-        "qualite": "Document OMS (source internationale, non sénégalaise)",
-        "date": "2026-08-12",
-        "commentaire": "Le seuil de 6 selles par jour codé dans alertes.py ne figure pas dans la source, qui ne quantifie pas la diarrhée profuse : choix d'implémentation à faire trancher par un médecin. La source est par ailleurs internationale et non sénégalaise."
+        "statut": "brouillon",
+        "par": "",
+        "qualite": "",
+        "date": "",
+        "commentaire": "Concept sourcé, seuil numérique non sourcé — choix d'implémentation à valider cliniquement."
       }
     },
     {
@@ -359,11 +376,11 @@
         "consulte_le": "2026-08-12"
       },
       "validation": {
-        "statut": "valide",
-        "par": "Source institutionnelle",
-        "qualite": "Document officiel MSAS/gouvernement",
-        "date": "2026-08-12",
-        "commentaire": "Le principe d'orientation sur durée prolongée est appuyé par la source, mais le seuil de 7 jours codé dans alertes.py n'y figure pas : les sources citent 3 semaines pour la toux et 14 jours pour la diarrhée. Choix d'implémentation à trancher."
+        "statut": "brouillon",
+        "par": "",
+        "qualite": "",
+        "date": "",
+        "commentaire": "Concept sourcé, seuil numérique non sourcé — choix d'implémentation à valider cliniquement."
       }
     },
     {
@@ -493,7 +510,7 @@
     },
     {
       "code": "toux_plus_3_semaines",
-      "libelle": "Toux persistant plus de 3 semaines — dépistage tuberculose",
+      "libelle": "Toux depuis plus de 3 semaines — dépistage tuberculose (PNT)",
       "niveau": "oriente",
       "motifs": [
         "respiratoire"
@@ -619,7 +636,7 @@
     },
     {
       "code": "tdr_systematique",
-      "libelle": "TDR paludisme systématique devant toute fièvre",
+      "libelle": "Fièvre : test de diagnostic rapide du paludisme requis (PNLP)",
       "niveau": "oriente",
       "motifs": [
         "tous"
