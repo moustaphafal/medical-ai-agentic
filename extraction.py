@@ -9,8 +9,11 @@ Le modèle de langage n'a qu'un rôle : remplir un champ. Il ne décide jamais
 de la question suivante ni de la conclusion — c'est le rôle de l'orchestrateur.
 """
 
+import json
+import os
 import re
 import unicodedata
+import urllib.request
 from rapidfuzz import fuzz
 
 SEUIL = 85
@@ -213,12 +216,105 @@ def extraire_age(texte: str, options: list) -> str | None:
             return label
     return "plus de 60 ans"
 
-def extraire_par_llm(champ, texte: str) -> str | None:
+_GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
+_GROQ_MODELE = "llama-3.1-8b-instant"
+_GROQ_TIMEOUT = 6
+
+# Valeurs renvoyées par le modèle mais refusées par le garde-fou.
+# Diagnostic uniquement : rien dans le triage ne lit cette liste.
+REJETS_LLM: list = []
+_MAX_REJETS = 50
+
+_INSTRUCTION = """Tu es un extracteur pour un agent de triage médical au Sénégal.
+Le patient parle wolof, français, ou un mélange des deux.
+
+Ton unique rôle : RANGER la réponse du patient dans une liste fermée d'options.
+Tu ne décides rien, tu ne donnes aucun avis médical, tu ne reformules pas.
+
+Réponds uniquement par un objet JSON : {"valeur": "<une option exacte>"}
+ou {"valeur": null} si tu n'es pas certain.
+
+Règles absolues :
+- La valeur doit être RECOPIÉE À L'IDENTIQUE depuis la liste d'options fournie.
+- Si la réponse du patient ne correspond à aucune option, réponds null.
+- Si la réponse est ambiguë, hors sujet, ou incompréhensible, réponds null.
+- NE JAMAIS déduire une négation d'un silence. Si le patient ne mentionne pas
+  un symptôme, ce n'est PAS un "non" : c'est null. L'absence d'information
+  n'est jamais une réponse négative.
+
+Exemples.
+
+Question : Quel âge a le patient ?
+Options : ["moins de 5 ans", "5 a 15 ans", "15 a 60 ans", "plus de 60 ans"]
+Patient : "fukki at"
+Réponse : {"valeur": "5 a 15 ans"}
+
+Question : Le patient est-il un homme ou une femme ?
+Options : ["homme", "femme"]
+Patient : "jigéen laa"
+Réponse : {"valeur": "femme"}
+
+Question : Avez-vous de la fièvre ?
+Options : ["oui", "non", "je ne sais pas"]
+Patient : "sama yaram tàng na"
+Réponse : {"valeur": "oui"}
+
+Question : Avez-vous de la fièvre ?
+Options : ["oui", "non", "je ne sais pas"]
+Patient : "sama bopp dafa metti"
+Réponse : {"valeur": null}"""
+
+
+def extraire_par_llm(champ, texte: str, langue: str = "fr") -> str | None:
+    """Secours lexical : range une réponse libre dans champ.options.
+
+    Retourne None à la moindre incertitude — clé absente, réseau, timeout,
+    JSON invalide, ou valeur hors domaine. Ne lève jamais d'exception :
+    l'orchestrateur doit pouvoir relancer sa question normalement.
     """
-    Doit retourner exclusivement une valeur de champ.options, ou None.
-    Prompt attendu, sortie JSON contrainte :
-        {"valeur": "<option exacte ou null>"}
-    """
+    cle = os.environ.get("GROQ_API_KEY")
+    if not cle or not texte or not str(texte).strip() or not champ.options:
+        return None
+
+    question = champ.question_wo if langue == "wo" else champ.question_fr
+    demande = (
+        f"Question : {question}\n"
+        f"Options : {json.dumps(champ.options, ensure_ascii=False)}\n"
+        f"Patient : \"{str(texte).strip()}\"\n"
+        "Réponse :"
+    )
+
+    corps = json.dumps({
+        "model": _GROQ_MODELE,
+        "temperature": 0,
+        "max_tokens": 40,
+        "response_format": {"type": "json_object"},
+        "messages": [
+            {"role": "system", "content": _INSTRUCTION},
+            {"role": "user", "content": demande},
+        ],
+    }).encode("utf-8")
+
+    requete = urllib.request.Request(
+        _GROQ_URL, data=corps, method="POST",
+        headers={"Content-Type": "application/json",
+                 "Authorization": f"Bearer {cle}"},
+    )
+
+    try:
+        with urllib.request.urlopen(requete, timeout=_GROQ_TIMEOUT) as reponse:
+            charge = json.loads(reponse.read().decode("utf-8"))
+        contenu = charge["choices"][0]["message"]["content"]
+        valeur = json.loads(contenu).get("valeur")
+    except Exception:
+        # Panne réseau, quota, timeout, JSON malformé : on relance la question.
+        return None
+
+    # Garde-fou : la sortie du modèle n'est jamais crue sur parole.
+    if valeur in champ.options:
+        return valeur
+    if valeur is not None and len(REJETS_LLM) < _MAX_REJETS:
+        REJETS_LLM.append({"champ": champ.nom, "brut": texte, "refuse": valeur})
     return None
 
 # Une durée n'est déduite que si elle est explicitement exprimée :
