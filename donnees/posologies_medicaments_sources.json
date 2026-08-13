@@ -1,22 +1,11 @@
 {
-  "_lisez_moi": {
-    "objet": "Formulaire thérapeutique fermé. Le modèle de langage ne rédige jamais un médicament ni une posologie : il sélectionne une entrée de cette liste.",
-    "regle": "candidats() filtre dans cet ordre : motif present dans 'motifs' ; tranche d'age presente et servable dans 'posologie' ; 'automedication' vrai ; puis, en MODE_STRICT, validation.statut == 'valide'.",
-    "volume_cible": "11 entrees sourcees (ANSM/BDPM, Vidal, guide MSF 2026). Les motifs respiratoire et abdominal n'ont aujourd'hui aucune entree servable : leurs seules fiches sont en statut brouillon ou hors automedication.",
-    "avertissement": "Posologies extraites de notices officielles (RCP/notice patient via la Base de Données Publique des Médicaments France / ANSM, et Vidal), et de l'ouvrage 'Médicaments essentiels — Guide pratique d'utilisation à l'usage des médecins, pharmaciens, infirmiers et auxiliaires de santé' (Médecins Sans Frontières, édition janvier 2026, 678 pages) — un livre publié, rédigé collectivement par des professionnels de santé de terrain, utilisé notamment en Afrique. Recherche complémentaire menée le 2026-08-13 pour identifier un ouvrage posologique publié spécifiquement au Sénégal (FMPO/UCAD, Ordre des Pharmaciens du Sénégal, Pharmacie Nationale d'Approvisionnement) : aucune publication de ce type n'a été trouvée en accès public en ligne à ce jour. Les dosages/présentations exacts vendus au Sénégal peuvent différer légèrement de ceux décrits ici (mêmes molécules, parfois conditionnements ou excipients différents) : à vérifier sur la boîte/notice réelle du produit. Statut : brouillon ou valide selon la fiabilité de la source (voir champ validation de chaque fiche) — 'valide' signifie source fiable et vérifiable, PAS validation clinique par un professionnel de santé sénégalais, qui reste nécessaire avant tout usage clinique ou intégration dans un outil de dispensation.",
-    "automedication": "Booleen distinct du statut. Le statut mesure la fiabilite de la SOURCE ; 'automedication' dit si un agent de triage peut proposer le medicament a un patient. Une fiche peut etre parfaitement sourcee et valide tout en etant hors automedication : injectable, ou antibiotique sur prescription."
-  },
-  "entrees": [
+  "avertissement": "Posologies extraites de notices officielles (RCP/notice patient via la Base de Données Publique des Médicaments France / ANSM, et Vidal), et de l'ouvrage 'Médicaments essentiels — Guide pratique d'utilisation à l'usage des médecins, pharmaciens, infirmiers et auxiliaires de santé' (Médecins Sans Frontières, édition janvier 2026, 678 pages) — un livre publié, rédigé collectivement par des professionnels de santé de terrain, utilisé notamment en Afrique. Recherche complémentaire menée le 2026-08-13 pour identifier un ouvrage posologique publié spécifiquement au Sénégal (FMPO/UCAD, Ordre des Pharmaciens du Sénégal, Pharmacie Nationale d'Approvisionnement) : aucune publication de ce type n'a été trouvée en accès public en ligne à ce jour. Les dosages/présentations exacts vendus au Sénégal peuvent différer légèrement de ceux décrits ici (mêmes molécules, parfois conditionnements ou excipients différents) : à vérifier sur la boîte/notice réelle du produit. Statut : brouillon ou valide selon la fiabilité de la source (voir champ validation de chaque fiche) — 'valide' signifie source fiable et vérifiable, PAS validation clinique par un professionnel de santé sénégalais, qui reste nécessaire avant tout usage clinique ou intégration dans un outil de dispensation.",
+  "medicaments": [
     {
       "code": "PARA-CP",
       "principe_actif": "Paracétamol",
       "forme": "Comprimé 500 mg",
       "indication": "Douleurs légères à modérées, fièvre",
-      "motifs": [
-        "cephalee",
-        "fievre_palu"
-      ],
-      "automedication": true,
       "posologie": {
         "moins de 5 ans": "Non adapté (forme comprimé réservée à partir de 27 kg / environ 8 ans) — utiliser la forme sirop",
         "5 a 15 ans": "Réservé à partir de 27 kg (~8 ans) : 27-40 kg → 1 cp/prise (max 4/j) ; 41-50 kg → 1 cp/prise, toutes les 4h (max 6/j)",
@@ -57,11 +46,6 @@
       "principe_actif": "Paracétamol",
       "forme": "Sirop 125 mg/5ml (proche de 120 mg/5ml MSF)",
       "indication": "Douleurs légères, fièvre",
-      "motifs": [
-        "cephalee",
-        "fievre_palu"
-      ],
-      "automedication": true,
       "posologie": {
         "moins de 5 ans": "15 mg/kg par prise, 3 à 4 fois/j (max 60 mg/kg/j) — ex. 6-10 kg : ~4ml x3 ; 10-15 kg : ~6ml x3 ; 15-20 kg : ~8ml x3 (adapter au dosage exact du sirop utilisé)",
         "5 a 15 ans": "15 mg/kg par prise, 3-4 fois/j jusqu'à 9-14 ans (20-50 kg), max 60 mg/kg/j",
@@ -86,10 +70,10 @@
         "titre": "Médicaments essentiels — Guide pratique d'utilisation à l'usage des médecins, pharmaciens, infirmiers et auxiliaires de santé",
         "editeur": "Médecins Sans Frontières (MSF)",
         "annee": 2026,
+        "edition": "Édition janvier 2026, 678 pages (rédaction collective par une équipe pluridisciplinaire de professionnels de santé de terrain ; préface signée par le Directeur du Programme Médicaments Essentiels de l'OMS)",
         "section": "Médicaments oraux > PARACÉTAMOL = ACÉTAMINOPHÈNE oral",
         "url": "https://medicalguidelines.msf.org/sites/default/files/pdf/guideline-339-fr.pdf",
         "consulte_le": "2026-08-13",
-        "edition": "Édition janvier 2026, 678 pages (rédaction collective par une équipe pluridisciplinaire de professionnels de santé de terrain ; préface signée par le Directeur du Programme Médicaments Essentiels de l'OMS)",
         "remarque": "Ouvrage publié (et non simple page web) : version PDF téléchargeable de 678 pages, avec ISBN, table des matières et rédaction collective de professionnels de santé. La version consultée précédemment (medicalguidelines.msf.org) est l'édition en ligne de ce même livre. Ce n'est pas un ouvrage sénégalais, mais un guide de référence international utilisé sur le terrain, y compris dans des contextes comme le Sénégal."
       },
       "validation": {
@@ -105,11 +89,6 @@
       "principe_actif": "Paracétamol",
       "forme": "Injectable 1g (perfusion IV)",
       "indication": "Douleur modérée et fièvre en post-opératoire ou quand la voie orale est impossible",
-      "motifs": [
-        "cephalee",
-        "fievre_palu"
-      ],
-      "automedication": false,
       "posologie": {
         "moins de 5 ans": "Nouveau-né à terme, nourrisson et enfant < 10 kg (~1 an) : 7,5 mg/kg par administration (max 4/j, intervalle ≥4h, max 30 mg/kg/j). Enfant 10-33 kg : 15 mg/kg par administration (max 4/j)",
         "5 a 15 ans": "Si < 33 kg : 15 mg/kg/administration (max 4/j) ; si > 33 kg : passer à la présentation adulte 1g",
@@ -149,11 +128,6 @@
       "principe_actif": "Ibuprofène",
       "forme": "Comprimé 400 mg",
       "indication": "Douleurs légères à modérées, fièvre, affections rhumatismales",
-      "motifs": [
-        "cephalee",
-        "fievre_palu"
-      ],
-      "automedication": true,
       "posologie": {
         "moins de 5 ans": "Non adapté (comprimé réservé ≥ 30 kg / ~10 ans) — utiliser la forme sirop",
         "5 a 15 ans": "10-12 ans (30-40 kg) : 1 cp 200mg x4/j (400mg réservé aux ≥12 ans/40kg)",
@@ -181,10 +155,10 @@
         "titre": "Médicaments essentiels — Guide pratique d'utilisation à l'usage des médecins, pharmaciens, infirmiers et auxiliaires de santé",
         "editeur": "Médecins Sans Frontières (MSF)",
         "annee": 2026,
+        "edition": "Édition janvier 2026, 678 pages (rédaction collective par une équipe pluridisciplinaire de professionnels de santé de terrain ; préface signée par le Directeur du Programme Médicaments Essentiels de l'OMS)",
         "section": "Médicaments oraux > IBUPROFÈNE oral",
         "url": "https://medicalguidelines.msf.org/sites/default/files/pdf/guideline-339-fr.pdf",
         "consulte_le": "2026-08-13",
-        "edition": "Édition janvier 2026, 678 pages (rédaction collective par une équipe pluridisciplinaire de professionnels de santé de terrain ; préface signée par le Directeur du Programme Médicaments Essentiels de l'OMS)",
         "remarque": "Ouvrage publié (et non simple page web) : version PDF téléchargeable de 678 pages, avec ISBN, table des matières et rédaction collective de professionnels de santé. La version consultée précédemment (medicalguidelines.msf.org) est l'édition en ligne de ce même livre. Ce n'est pas un ouvrage sénégalais, mais un guide de référence international utilisé sur le terrain, y compris dans des contextes comme le Sénégal."
       },
       "validation": {
@@ -200,11 +174,6 @@
       "principe_actif": "Ibuprofène",
       "forme": "Sirop 100 mg/5ml",
       "indication": "Douleurs, fièvre chez l'enfant",
-      "motifs": [
-        "cephalee",
-        "fievre_palu"
-      ],
-      "automedication": true,
       "posologie": {
         "moins de 5 ans": "Enfant > 3 mois, 5-20 kg : 5-10 mg/kg par prise, 3-4 fois/j (max 30 mg/kg/j). Ne pas administrer avant 3 mois",
         "5 a 15 ans": "20-30 kg (6-10 ans) : 5-10 mg/kg/prise x3 (sirop ou cp 200mg) ; au-delà, passer aux comprimés",
@@ -230,10 +199,10 @@
         "titre": "Médicaments essentiels — Guide pratique d'utilisation à l'usage des médecins, pharmaciens, infirmiers et auxiliaires de santé",
         "editeur": "Médecins Sans Frontières (MSF)",
         "annee": 2026,
+        "edition": "Édition janvier 2026, 678 pages (rédaction collective par une équipe pluridisciplinaire de professionnels de santé de terrain ; préface signée par le Directeur du Programme Médicaments Essentiels de l'OMS)",
         "section": "Médicaments oraux > IBUPROFÈNE oral",
         "url": "https://medicalguidelines.msf.org/sites/default/files/pdf/guideline-339-fr.pdf",
         "consulte_le": "2026-08-13",
-        "edition": "Édition janvier 2026, 678 pages (rédaction collective par une équipe pluridisciplinaire de professionnels de santé de terrain ; préface signée par le Directeur du Programme Médicaments Essentiels de l'OMS)",
         "remarque": "Ouvrage publié (et non simple page web) : version PDF téléchargeable de 678 pages, avec ISBN, table des matières et rédaction collective de professionnels de santé. La version consultée précédemment (medicalguidelines.msf.org) est l'édition en ligne de ce même livre. Ce n'est pas un ouvrage sénégalais, mais un guide de référence international utilisé sur le terrain, y compris dans des contextes comme le Sénégal."
       },
       "validation": {
@@ -249,10 +218,6 @@
       "principe_actif": "Carbocystéine",
       "forme": "Sirop 2% et 5%",
       "indication": "Toux grasse, encombrement bronchique",
-      "motifs": [
-        "respiratoire"
-      ],
-      "automedication": true,
       "posologie": {
         "moins de 5 ans": "2 à 5 ans (sirop 2% uniquement) : 5 ml, 2 fois/j (200 mg/j). Contre-indiqué avant 2 ans",
         "5 a 15 ans": "Sirop 2% : 5 ml, 3 fois/j (300 mg/j) jusqu'à 15 ans",
@@ -295,10 +260,6 @@
       "principe_actif": "Dextrométhorphane",
       "forme": "Sirop 1,5 mg/ml",
       "indication": "Toux sèche irritative",
-      "motifs": [
-        "respiratoire"
-      ],
-      "automedication": true,
       "posologie": {
         "moins de 5 ans": "30 mois à 6 ans : 2,5 ml, 4 à 6 fois/j (13-20 mg/j). Non recommandé avant 30 mois",
         "5 a 15 ans": "6-12 ans : 5 ml, 3-4 fois/j. 12-15 ans : 5 ml, 4-6 fois/j",
@@ -345,10 +306,6 @@
       "principe_actif": "Phloroglucinol + Triméthylphloroglucinol",
       "forme": "Comprimé 80mg/80mg (lyophilisat oral), injectable 40mg/4ml",
       "indication": "Douleurs spasmodiques du tube digestif, des voies biliaires, urinaires (colique néphrétique), gynécologiques, contractions pendant la grossesse",
-      "motifs": [
-        "abdominal"
-      ],
-      "automedication": true,
       "posologie": {
         "moins de 5 ans": "Non recommandé (forme comprimé/lyoc à partir de 6 ans)",
         "5 a 15 ans": "Enfant > 6 ans : 1 comprimé (80mg), 2 fois/j, en espaçant les prises d'au moins 2h (max 2 cp/j)",
@@ -392,10 +349,6 @@
       "principe_actif": "Sels de Réhydratation Orale (faible osmolarité)",
       "forme": "Poudre en sachet (Glucose 13,5g/L, NaCl 2,6g/L, KCl 1,5g/L, Citrate trisodique 2,9g/L)",
       "indication": "Prévention et traitement de la déshydratation (diarrhée aiguë, choléra)",
-      "motifs": [
-        "diarrhee"
-      ],
-      "automedication": true,
       "posologie": {
         "moins de 5 ans": "Prévention : <24 mois → 50-100 ml après chaque selle liquide ; 2-5 ans → 100-200 ml. Réhydratation modérée (Plan B, 4h) : <4 mois (<5kg) → 200-400 ml ; 4-11 mois (5-8kg) → 400-600 ml ; 12-23 mois (8-11kg) → 600-800 ml ; 2-4 ans (11-16kg) → 800-1200 ml",
         "5 a 15 ans": "Prévention : 100-200 ml (jusqu'à 10 ans) puis 200-400 ml après. Plan B (4h) : 5-14 ans (16-30kg) → 1200-2200 ml",
@@ -422,10 +375,10 @@
         "titre": "Médicaments essentiels — Guide pratique d'utilisation à l'usage des médecins, pharmaciens, infirmiers et auxiliaires de santé",
         "editeur": "Médecins Sans Frontières (MSF)",
         "annee": 2026,
+        "edition": "Édition janvier 2026, 678 pages (rédaction collective par une équipe pluridisciplinaire de professionnels de santé de terrain ; préface signée par le Directeur du Programme Médicaments Essentiels de l'OMS)",
         "section": "Médicaments oraux > SELS DE RÉHYDRATATION ORALE = SRO = ORS",
         "url": "https://medicalguidelines.msf.org/sites/default/files/pdf/guideline-339-fr.pdf",
         "consulte_le": "2026-08-13",
-        "edition": "Édition janvier 2026, 678 pages (rédaction collective par une équipe pluridisciplinaire de professionnels de santé de terrain ; préface signée par le Directeur du Programme Médicaments Essentiels de l'OMS)",
         "remarque": "Ouvrage publié (et non simple page web) : version PDF téléchargeable de 678 pages, avec ISBN, table des matières et rédaction collective de professionnels de santé. La version consultée précédemment (medicalguidelines.msf.org) est l'édition en ligne de ce même livre. Ce n'est pas un ouvrage sénégalais, mais un guide de référence international utilisé sur le terrain, y compris dans des contextes comme le Sénégal."
       },
       "validation": {
@@ -441,10 +394,6 @@
       "principe_actif": "Zinc (sulfate)",
       "forme": "Comprimé dispersible ou sirop 20mg",
       "indication": "Diarrhée aiguë et/ou persistante (traitement adjuvant), enfant de moins de 5 ans",
-      "motifs": [
-        "diarrhee"
-      ],
-      "automedication": true,
       "posologie": {
         "moins de 5 ans": "< 6 mois : 10 mg (½ comprimé), 1 fois/j, pendant 10 jours. 6 mois-5 ans : 20 mg (1 comprimé), 1 fois/j, pendant 10 jours",
         "5 a 15 ans": "Usage principalement réservé à l'enfant < 5 ans dans cette indication — avis médical si utilisé au-delà",
@@ -471,10 +420,10 @@
         "titre": "Médicaments essentiels — Guide pratique d'utilisation à l'usage des médecins, pharmaciens, infirmiers et auxiliaires de santé",
         "editeur": "Médecins Sans Frontières (MSF)",
         "annee": 2026,
+        "edition": "Édition janvier 2026, 678 pages (rédaction collective par une équipe pluridisciplinaire de professionnels de santé de terrain ; préface signée par le Directeur du Programme Médicaments Essentiels de l'OMS)",
         "section": "Médicaments oraux > Sulfate de ZINC oral",
         "url": "https://medicalguidelines.msf.org/sites/default/files/pdf/guideline-339-fr.pdf",
         "consulte_le": "2026-08-13",
-        "edition": "Édition janvier 2026, 678 pages (rédaction collective par une équipe pluridisciplinaire de professionnels de santé de terrain ; préface signée par le Directeur du Programme Médicaments Essentiels de l'OMS)",
         "remarque": "Ouvrage publié (et non simple page web) : version PDF téléchargeable de 678 pages, avec ISBN, table des matières et rédaction collective de professionnels de santé. La version consultée précédemment (medicalguidelines.msf.org) est l'édition en ligne de ce même livre. Ce n'est pas un ouvrage sénégalais, mais un guide de référence international utilisé sur le terrain, y compris dans des contextes comme le Sénégal."
       },
       "validation": {
@@ -490,11 +439,6 @@
       "principe_actif": "Métronidazole",
       "forme": "Comprimé 250mg et 500mg, suspension buvable 200mg/5ml",
       "indication": "Amibiase, giardiase, trichomonase, infections à bactéries anaérobies — sur prescription uniquement",
-      "motifs": [
-        "diarrhee",
-        "abdominal"
-      ],
-      "automedication": false,
       "posologie": {
         "moins de 5 ans": "Amibiase : 15 mg/kg, 3 fois/j, 5 jours (intestinale) à 5-10 jours (hépatique). Giardiase : 30 mg/kg, 1 fois/j, 3 jours. Sur prescription médicale uniquement",
         "5 a 15 ans": "Identique au dosage pédiatrique (mg/kg) ci-dessus jusqu'à un poids adulte",
@@ -522,10 +466,10 @@
         "titre": "Médicaments essentiels — Guide pratique d'utilisation à l'usage des médecins, pharmaciens, infirmiers et auxiliaires de santé",
         "editeur": "Médecins Sans Frontières (MSF)",
         "annee": 2026,
+        "edition": "Édition janvier 2026, 678 pages (rédaction collective par une équipe pluridisciplinaire de professionnels de santé de terrain ; préface signée par le Directeur du Programme Médicaments Essentiels de l'OMS)",
         "section": "Médicaments oraux > MÉTRONIDAZOLE oral",
         "url": "https://medicalguidelines.msf.org/sites/default/files/pdf/guideline-339-fr.pdf",
         "consulte_le": "2026-08-13",
-        "edition": "Édition janvier 2026, 678 pages (rédaction collective par une équipe pluridisciplinaire de professionnels de santé de terrain ; préface signée par le Directeur du Programme Médicaments Essentiels de l'OMS)",
         "remarque": "Ouvrage publié (et non simple page web) : version PDF téléchargeable de 678 pages, avec ISBN, table des matières et rédaction collective de professionnels de santé. La version consultée précédemment (medicalguidelines.msf.org) est l'édition en ligne de ce même livre. Ce n'est pas un ouvrage sénégalais, mais un guide de référence international utilisé sur le terrain, y compris dans des contextes comme le Sénégal."
       },
       "validation": {
