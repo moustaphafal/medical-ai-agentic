@@ -38,8 +38,13 @@ def _source_complete(source: dict) -> list:
 
 
 def _validee(entree: dict) -> bool:
-    v = entree.get("validation", {})
-    return v.get("statut") == "valide" and bool(v.get("par")) and bool(v.get("date"))
+    """Aligné sur formulaire.py : seul le statut décide.
+
+    Le champ 'par' reste volontairement vide tant qu'aucun professionnel de
+    santé n'a relu les fiches ; l'exiger ici faisait diverger ce rapport de
+    ce que le système sert réellement.
+    """
+    return entree.get("validation", {}).get("statut") == "valide"
 
 
 # --------------------------------------------------------------------------

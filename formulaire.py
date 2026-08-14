@@ -28,6 +28,10 @@ CHEMIN = Path(__file__).parent / "donnees" / "formulaire.json"
 
 TRANCHES = ["moins de 5 ans", "5 a 15 ans", "15 a 60 ans", "plus de 60 ans"]
 
+# Une entrée sans 'priorite' passe en dernier plutôt que de se retrouver
+# servie en premier par accident.
+PRIORITE_PAR_DEFAUT = 99
+
 # Une case de posologie peut être renseignée sans être servable : elle renvoie
 # à une autre forme, à une autre tranche d'âge, ou à un avis médical. Lire ces
 # textes à voix haute à un patient reviendrait à lui donner un non-sens.
@@ -69,6 +73,10 @@ def candidats(motif: str, age_tranche: str) -> list:
 
     Quatre filtres successifs : motif couvert, posologie servable pour la
     tranche, médicament relevant de l'automédication, source validée.
+
+    Le résultat est trié par 'priorite' croissante. L'orchestrateur retenant
+    le premier élément, l'ordre de sélection clinique est ainsi porté par une
+    donnée explicite, et non par l'ordre d'écriture du JSON.
     """
     retenues = []
     for entree in FORMULAIRE:
@@ -81,6 +89,9 @@ def candidats(motif: str, age_tranche: str) -> list:
         if MODE_STRICT and entree.get("validation", {}).get("statut") != "valide":
             continue
         retenues.append(entree)
+
+    # Tri stable : à priorité égale, l'ordre du fichier est conservé.
+    retenues.sort(key=lambda e: e.get("priorite", PRIORITE_PAR_DEFAUT))
     return retenues
 
 
