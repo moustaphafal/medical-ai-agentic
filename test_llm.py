@@ -135,7 +135,7 @@ SURETE = [
 # --------------------------------------------------------------------------
 
 CAS_WOLOF = [
-    ("age_tranche", "fukki at",                 "5 a 15 ans"),
+    ("age_tranche", "fukki at",                 "10 a 14 ans"),
     ("age_tranche", "ñaar fukk ak juroom at",   "15 a 60 ans"),
     ("sexe",        "jigéen laa",               "femme"),
     ("fievre",      "sama yaram tàng na",       "oui"),

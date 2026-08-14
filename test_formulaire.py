@@ -25,6 +25,11 @@ TRANCHES = formulaire.TRANCHES
 # Doivent rester invisibles quel que soit le profil.
 INTERDITS = ["METRO", "PARA-INJ"]
 
+# Formes comprimé interdites sous le seuil galénique documenté par les fiches :
+# 27 kg (~8 ans) pour le paracétamol, 30 kg (~10 ans) pour l'ibuprofène.
+# C'est la raison d'être du découpage 5-9 / 10-14.
+COMPRIMES_INTERDITS = {"5 a 9 ans": ["PARA-CP", "IBU-CP"]}
+
 
 def couverture():
     """Tableau motif x tranche. Retourne les anomalies détectées."""
@@ -43,6 +48,11 @@ def couverture():
                     anomalies.append(
                         f"{motif}/{tranche} : {code} propose alors qu'il est "
                         "hors automedication")
+
+                if code in COMPRIMES_INTERDITS.get(tranche, []):
+                    anomalies.append(
+                        f"{motif}/{tranche} : {code} propose alors que le "
+                        "comprime est sous le seuil de poids documente")
 
                 if e.get("automedication", True) is not True:
                     anomalies.append(

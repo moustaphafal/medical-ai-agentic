@@ -19,7 +19,8 @@ RACINE = Path(__file__).parent
 MODE_STRICT = True
 
 CHAMPS_SOURCE = ["titre", "editeur", "annee", "url", "consulte_le"]
-TRANCHES = ["moins de 5 ans", "5 a 15 ans", "15 a 60 ans", "plus de 60 ans"]
+TRANCHES = ["moins de 5 ans", "5 a 9 ans", "10 a 14 ans",
+            "15 a 60 ans", "plus de 60 ans"]
 
 
 class DonneeInvalide(Exception):
@@ -47,11 +48,22 @@ def _validee(entree: dict) -> bool:
     return entree.get("validation", {}).get("statut") == "valide"
 
 
+def _automedication(entree: dict) -> bool:
+    """Le médicament peut-il être proposé à un patient par l'agent ?
+
+    Distinct du statut, qui ne mesure que la fiabilité de la source. Un
+    injectable ou un antibiotique sur prescription reste parfaitement sourcé
+    tout en étant hors du périmètre de l'automédication.
+    """
+    return entree.get("automedication", True) is True
+
+
 # --------------------------------------------------------------------------
 
 def controler() -> dict:
     """Retourne un rapport de complétude. N'interrompt jamais l'exécution."""
-    rapport = {"pretes": [], "incompletes": [], "non_validees": []}
+    rapport = {"pretes": [], "incompletes": [], "non_validees": [],
+               "hors_automedication": []}
 
     formulaire = _charger("formulaire.json")
     for e in formulaire["entrees"]:
@@ -68,6 +80,8 @@ def controler() -> dict:
 
         if manques:
             rapport["incompletes"].append({"code": code, "manque": manques})
+        elif not _automedication(e):
+            rapport["hors_automedication"].append(code)
         elif not _validee(e):
             rapport["non_validees"].append(code)
         else:
@@ -77,12 +91,19 @@ def controler() -> dict:
 
 
 def entrees_servables() -> list:
-    """Entrées que le système accepte de recommander."""
+    """Entrées que le système accepte de recommander.
+
+    Mêmes critères que formulaire.candidats(), motif et tranche d'âge en
+    moins : ce rapport doit dire la même chose que ce que l'agent sert.
+    """
     formulaire = _charger("formulaire.json")
     entrees = formulaire["entrees"]
     if not MODE_STRICT:
         return entrees
-    return [e for e in entrees if _validee(e) and not _source_complete(e.get("source", {}))]
+    return [e for e in entrees
+            if _validee(e)
+            and _automedication(e)
+            and not _source_complete(e.get("source", {}))]
 
 
 def protocole(motif: str) -> dict | None:
@@ -98,6 +119,8 @@ if __name__ == "__main__":
     r = controler()
     print(f"Prêtes à servir      : {len(r['pretes'])}  {r['pretes']}")
     print(f"Validées manquantes  : {len(r['non_validees'])}  {r['non_validees']}")
+    print(f"Hors automédication  : {len(r['hors_automedication'])}  "
+          f"{r['hors_automedication']}")
     print(f"Incomplètes          : {len(r['incompletes'])}")
     for e in r["incompletes"]:
         print(f"   {e['code']} : {', '.join(e['manque'])}")

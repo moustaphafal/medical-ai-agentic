@@ -80,7 +80,12 @@ CHAMPS = [
         question_fr="Quel âge a le patient ?",
         question_wo="Ñaata at la am ?",
         type="choix",
-        options=["moins de 5 ans", "5 a 15 ans", "15 a 60 ans", "plus de 60 ans"],
+        # Découpage aligné sur les seuils galéniques des fiches : le comprimé
+        # est réservé à 27 kg (~8 ans) pour le paracétamol, 30 kg (~10 ans)
+        # pour l'ibuprofène. Une tranche 5-15 ans mélangeait des enfants pour
+        # qui le comprimé est contre-indiqué et des adolescents à qui il convient.
+        options=["moins de 5 ans", "5 a 9 ans", "10 a 14 ans",
+                 "15 a 60 ans", "plus de 60 ans"],
         ordre=10,
     ),
     Champ(

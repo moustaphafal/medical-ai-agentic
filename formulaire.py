@@ -26,7 +26,8 @@ MODE_STRICT = True
 
 CHEMIN = Path(__file__).parent / "donnees" / "formulaire.json"
 
-TRANCHES = ["moins de 5 ans", "5 a 15 ans", "15 a 60 ans", "plus de 60 ans"]
+TRANCHES = ["moins de 5 ans", "5 a 9 ans", "10 a 14 ans",
+            "15 a 60 ans", "plus de 60 ans"]
 
 # Une entrée sans 'priorite' passe en dernier plutôt que de se retrouver
 # servie en premier par accident.

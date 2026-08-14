@@ -37,6 +37,7 @@ def phonetiser(s: str) -> str:
     s = re.sub(r"[^a-z0-9\s]", " ", s)
     s = s.translate(_SONORES)
     s = re.sub(r"(.)\1+", r"\1", s)
+    s = s.replace("kh", "q").replace("x", "q")   # [q] : kh, x, q → une forme
     return re.sub(r"\s+", " ", s).strip()
 
 def _simplifier(s: str) -> str:
@@ -184,7 +185,7 @@ def extraire(champ, texte: str, langue: str = "fr"):
 # pour renvoyer une valeur du domaine du champ. Jamais pour décider.
 # --------------------------------------------------------------------------
 
-_TRANCHES = [(5, "moins de 5 ans"), (15, "5 a 15 ans"),
+_TRANCHES = [(5, "moins de 5 ans"), (10, "5 a 9 ans"), (15, "10 a 14 ans"),
              (60, "15 a 60 ans"), (200, "plus de 60 ans")]
 _MOTS_AGE = {"un":1,"deux":2,"trois":3,"quatre":4,"cinq":5,"six":6,"sept":7,
              "huit":8,"neuf":9,"dix":10,"vingt":20,"trente":30,"quarante":40,
@@ -252,9 +253,9 @@ Règles absolues :
 Exemples.
 
 Question : Quel âge a le patient ?
-Options : ["moins de 5 ans", "5 a 15 ans", "15 a 60 ans", "plus de 60 ans"]
+Options : ["moins de 5 ans", "5 a 9 ans", "10 a 14 ans", "15 a 60 ans", "plus de 60 ans"]
 Patient : "fukki at"
-Réponse : {"valeur": "5 a 15 ans"}
+Réponse : {"valeur": "10 a 14 ans"}
 
 Question : Le patient est-il un homme ou une femme ?
 Options : ["homme", "femme"]
@@ -283,7 +284,7 @@ def extraire_par_llm(champ, texte: str, langue: str = "fr") -> str | None:
     if not cle or not texte or not str(texte).strip() or not champ.options:
         return None
 
-    question = champ.question_wo if langue == "wo" else champ.question_fr
+    question = (champ.question_wo if langue == "wo" else champ.question_fr) or champ.question_fr
     demande = (
         f"Question : {question}\n"
         f"Options : {json.dumps(champ.options, ensure_ascii=False)}\n"
