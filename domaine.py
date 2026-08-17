@@ -55,6 +55,22 @@ class Champ:
 OUI_NON = ["oui", "non", "je ne sais pas"]
 
 
+# Champs sur lesquels une information manquante ne peut pas être ignorée :
+# la passer sous silence reviendrait à supposer une réponse négative.
+# Défini ici, et non dans orchestrateur.py, pour que extraction.py puisse
+# s'y référer sans créer de cycle d'import.
+CHAMPS_CRITIQUES = {
+    "age_tranche",
+    "grossesse",
+    "dyspnee",
+    "conscience_alteree",
+    "saignement",
+    "douleur_thoracique",
+    "deshydratation",
+    "raideur_nuque",
+}
+
+
 # --------------------------------------------------------------------------
 # Le questionnaire
 #

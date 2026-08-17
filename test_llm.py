@@ -112,6 +112,49 @@ def test_timeout():
     return r is None, f"attendu None, obtenu {r!r}"
 
 
+def test_champs_critiques_hors_llm():
+    """Aucun signe d'alerte ne doit atteindre le modèle.
+
+    Garantie structurelle : elle tient même avec une clé valide et une API
+    disponible, donc sans dépendre de la qualité du prompt.
+    """
+    vraie_cle = os.environ.get("GROQ_API_KEY")
+    os.environ["GROQ_API_KEY"] = "cle-de-test"
+
+    appels = []
+    vrai_urlopen = urllib.request.urlopen
+
+    def espion(*a, **k):
+        appels.append(1)
+        return _FausseReponse('{"valeur": "non"}')
+
+    urllib.request.urlopen = espion
+    try:
+        fuites = []
+        for nom in sorted(domaine.CHAMPS_CRITIQUES):
+            champ = CHAMPS.get(nom)
+            if champ is None:
+                continue
+            valeur = extraction.extraire_par_llm(champ, "sama yaram tang na")
+            if valeur is not None or appels:
+                fuites.append(nom)
+            appels.clear()
+    finally:
+        urllib.request.urlopen = vrai_urlopen
+        if vraie_cle is None:
+            os.environ.pop("GROQ_API_KEY", None)
+        else:
+            os.environ["GROQ_API_KEY"] = vraie_cle
+
+    return not fuites, f"champs critiques passes au LLM : {fuites}"
+
+
+def test_champ_non_critique_passe():
+    """Contre-épreuve : le blocage ne doit pas assécher les autres champs."""
+    r = _avec_reponse_simulee('{"valeur": "oui"}', CHAMPS["vomissements"])
+    return r == "oui", f"attendu 'oui', obtenu {r!r}"
+
+
 def test_valeur_valide_passe():
     """Contre-épreuve : sans elle, une fonction qui renvoie toujours None
     passerait tous les tests ci-dessus."""
@@ -127,6 +170,8 @@ SURETE = [
     ("Erreur reseau                     -> None", test_erreur_reseau),
     ("Timeout                           -> None", test_timeout),
     ("Valeur valide                     -> acceptee", test_valeur_valide_passe),
+    ("Champs critiques                  -> jamais au LLM", test_champs_critiques_hors_llm),
+    ("Champ non critique                -> LLM actif", test_champ_non_critique_passe),
 ]
 
 
@@ -134,12 +179,14 @@ SURETE = [
 # Tests de qualité wolof — informatifs
 # --------------------------------------------------------------------------
 
+# Seuls des champs NON critiques : les signes d'alerte ne passent plus par
+# le modèle (voir test_champs_critiques_hors_llm), donc les y tester
+# reviendrait à mesurer le blocage plutôt que la qualité du modèle.
 CAS_WOLOF = [
-    ("age_tranche", "fukki at",                 "10 a 14 ans"),
-    ("age_tranche", "ñaar fukk ak juroom at",   "15 a 60 ans"),
-    ("sexe",        "jigéen laa",               "femme"),
-    ("fievre",      "sama yaram tàng na",       "oui"),
-    ("fievre",      "xamuma",                   "je ne sais pas"),
+    ("sexe",         "jigéen laa",          "femme"),
+    ("fievre",       "sama yaram tàng na",  "oui"),
+    ("fievre",       "xamuma",              "je ne sais pas"),
+    ("vomissements", "damay waccu",         "oui"),
 ]
 
 # Le patient ne répond PAS à la question posée. Attendu : None, jamais "non".
@@ -150,16 +197,17 @@ CAS_WOLOF = [
 # Tous portent sur des SIGNES D'ALERTE : un "non" inventé y neutralise une
 # règle de alertes.py et fait perdre une orientation. Un None est toujours
 # acceptable, une valeur inventée ne l'est jamais.
+# Champs NON critiques uniquement. Les signes d'alerte sont désormais
+# protégés par construction et non plus par le prompt : les inclure ici
+# validerait le blocage, pas la règle du silence.
 CAS_SILENCE = [
-    ("fievre",             "sama bopp dafa metti"),   # parle de sa tête
-    ("fievre",             "naka nga def"),           # salutation, hors sujet
-    ("dyspnee",            "sama biir dafa metti"),   # parle du ventre
-    ("dyspnee",            "j'ai mal a la tete"),
-    ("saignement",         "dama am tangaay"),        # parle de fièvre
-    ("conscience_alteree", "je tousse depuis trois jours"),
-    ("douleur_thoracique", "sama bopp dafay metti"),
-    ("deshydratation",     "j'ai mal au ventre"),
-    ("sexe",               "waaw"),                   # « oui » ne dit pas le sexe
+    ("fievre",               "sama bopp dafa metti"),   # parle de sa tête
+    ("fievre",               "naka nga def"),           # salutation, hors sujet
+    ("fievre",               "j'ai mal au ventre"),
+    ("vomissements",         "je tousse depuis trois jours"),
+    ("antecedents",          "sama bopp dafay metti"),
+    ("echec_automedication", "dama am tangaay"),
+    ("sexe",                 "waaw"),                   # « oui » ne dit pas le sexe
 ]
 
 # Le plafond Groq mesuré est de 6000 tokens/min pour ~940 tokens par appel,

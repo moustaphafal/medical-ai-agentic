@@ -40,16 +40,10 @@ INCONNU = "inconnu"
 
 # Champs dont l'absence de réponse interdit toute conclusion bénigne.
 # Si l'un d'eux reste inconnu, l'entretien bascule en orientation.
-CHAMPS_CRITIQUES = {
-    "age_tranche",
-    "grossesse",
-    "dyspnee",
-    "conscience_alteree",
-    "saignement",
-    "douleur_thoracique",
-    "deshydratation",
-    "raideur_nuque",
-}
+# Déplacé dans domaine.py : extraction.py doit y accéder sans importer
+# l'orchestrateur, ce qui créerait un cycle. Réexporté ici pour les appelants
+# existants.
+CHAMPS_CRITIQUES = domaine.CHAMPS_CRITIQUES
 
 
 @dataclass

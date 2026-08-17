@@ -17,6 +17,7 @@ import urllib.request
 from rapidfuzz import fuzz
 
 import config  # noqa: F401  — charge .env dans os.environ dès l'import
+from domaine import CHAMPS_CRITIQUES
 
 SEUIL = 85
 
@@ -131,6 +132,35 @@ def _detecte(cle: str, texte: str) -> bool:
 # Extraction par type de champ
 # --------------------------------------------------------------------------
 
+# Reprendre les mots du symptôme interrogé est une affirmation, en wolof
+# comme en français : « noyyi bu jafe laa am » répond oui à
+# « Noyyi dafa la jafe ? ». Chaque champ binaire est décrit par les clés du
+# LEXIQUE qui le caractérisent.
+CLES_PAR_CHAMP = {
+    "dyspnee":            ["respirer", "difficile"],
+    "fievre":             ["fievre"],
+    "vomissements":       ["vomir"],
+    "saignement":         ["sang"],
+    "douleur_thoracique": ["poitrine", "douleur"],
+    "antecedents":        ["tension", "diabete"],
+}
+
+
+def extraire_reprise(nom_champ: str, texte: str) -> str | None:
+    """Réponse déduite de la reprise des mots de la question. Sans modèle.
+
+    Exige TOUTES les clés du champ interrogé : sans quoi un autre symptôme
+    déclencherait à tort. « sama biir dafa metti » parle du ventre et ne dit
+    rien de la respiration — la clé « respirer » manque, on ne conclut pas.
+    """
+    cles = CLES_PAR_CHAMP.get(nom_champ)
+    if not cles:
+        return None
+    if not all(_detecte(c, texte) for c in cles):
+        return None
+    return "non" if _detecte("non", texte) else "oui"
+
+
 def extraire_binaire(texte: str) -> str | None:
     if _detecte("oui", texte):
         return "oui"
@@ -198,7 +228,10 @@ def extraire(champ, texte: str, langue: str = "fr"):
         return extraire_entier(texte)
     if champ.type == "choix":
         if set(champ.options) <= {"oui", "non", "je ne sais pas"}:
-            return extraire_binaire(texte)
+            # La reprise de question passe en premier ; l'appariement
+            # oui/non reste le repli.
+            reprise = extraire_reprise(champ.nom, texte)
+            return reprise if reprise is not None else extraire_binaire(texte)
         return extraire_choix(texte, champ.options)
     if champ.type == "texte":
         return texte.strip() or None
@@ -255,6 +288,10 @@ _AGENT = "medical-ai-agentic/1.0 (+https://github.com/moustaphafal/medical-ai-ag
 REJETS_LLM: list = []
 _MAX_REJETS = 50
 
+# Le mot « JSON » doit rester présent dans ce texte : avec
+# response_format={"type": "json_object"}, l'API rejette la requête (HTTP 400)
+# si aucun message ne le mentionne. Le retirer casse tout le secours LLM,
+# silencieusement — l'erreur est avalée et la fonction renvoie None.
 _INSTRUCTION = """Tu es un extracteur pour un agent de triage médical au Sénégal.
 Le patient parle wolof, français, ou un mélange des deux.
 
@@ -273,23 +310,14 @@ Règles absolues :
   n'est jamais une réponse négative.
 - Chaque question porte sur UN symptôme précis. Si le patient parle d'un AUTRE
   symptôme, il n'a pas répondu à la question posée : réponds null. Parler du
-  ventre ne dit rien de la respiration. Parler de la tête ne dit rien d'un
-  saignement. Avoir de la fièvre ne dit rien de l'état de conscience.
+  ventre ne dit rien de la fièvre.
   Ne raisonne jamais « il n'en a pas parlé, donc il ne l'a pas ».
-- Cette règle est la plus importante de toutes. Ces questions portent sur des
-  signes d'alerte : un "non" inventé empêche d'orienter un patient qui en a
-  besoin. Dans le doute, null.
 - Ne confonds pas TON incertitude avec celle du patient. Si le patient déclare
   explicitement qu'il ne sait pas ("xamuma", "je ne sais pas", "je ne suis pas
   sûr") et que "je ne sais pas" figure dans les options, choisis cette option :
   c'est une réponse, pas une absence de réponse.
 
 Exemples.
-
-Question : Quel âge a le patient ?
-Options : ["moins de 5 ans", "5 a 9 ans", "10 a 14 ans", "15 a 60 ans", "plus de 60 ans"]
-Patient : "fukki at"
-Réponse : {"valeur": "10 a 14 ans"}
 
 Question : Le patient est-il un homme ou une femme ?
 Options : ["homme", "femme"]
@@ -301,27 +329,38 @@ Options : ["oui", "non", "je ne sais pas"]
 Patient : "sama yaram tàng na"
 Réponse : {"valeur": "oui"}
 
-Question : Noyyi dafa la jafe ?
-Options : ["oui", "non", "je ne sais pas"]
-Patient : "j'ai du mal à respirer depuis hier"
-Réponse : {"valeur": "oui"}
-
-Le patient parle d'un autre symptôme que celui de la question : null.
-
 Question : Avez-vous de la fièvre ?
 Options : ["oui", "non", "je ne sais pas"]
 Patient : "sama bopp dafa metti"
-Réponse : {"valeur": null}
-
-Question : Noyyi dafa la jafe ?
-Options : ["oui", "non", "je ne sais pas"]
-Patient : "sama biir dafa metti"
-Réponse : {"valeur": null}
-
-Question : Avez-vous un saignement ?
-Options : ["oui", "non", "je ne sais pas"]
-Patient : "dama am tàngaay"
 Réponse : {"valeur": null}"""
+
+
+def _corrobore(champ, texte: str, valeur) -> bool:
+    """Le texte du patient soutient-il vraiment cette valeur ?
+
+    Deux garanties déterministes, qui ne dépendent pas du prompt — la
+    formulation de l'instruction s'est montrée trop instable pour porter
+    seule une propriété de sécurité :
+
+      - un "non" n'est accepté que si un marqueur de négation figure dans la
+        réponse. Sinon le modèle a déduit une négation d'un silence, ce qui
+        neutralise une règle d'alerte ;
+      - une réponse réduite à « waaw » ou « déedéet » ne peut pas désigner
+        une option dans une liste non binaire : dire oui ne dit pas si l'on
+        est un homme ou une femme.
+    """
+    if valeur is None:
+        return True
+
+    binaire = set(champ.options) <= {"oui", "non", "je ne sais pas"}
+
+    if binaire:
+        return valeur != "non" or _detecte("non", texte)
+
+    mots = str(texte).split()
+    if len(mots) == 1 and (_detecte("oui", texte) or _detecte("non", texte)):
+        return False
+    return True
 
 
 def extraire_par_llm(champ, texte: str, langue: str = "fr") -> str | None:
@@ -331,6 +370,12 @@ def extraire_par_llm(champ, texte: str, langue: str = "fr") -> str | None:
     JSON invalide, ou valeur hors domaine. Ne lève jamais d'exception :
     l'orchestrateur doit pouvoir relancer sa question normalement.
     """
+    # Les signes d'alerte ne passent jamais par le modèle. Les réponses
+    # attendues sont binaires et couvertes par le lexique ; un "non" inventé
+    # y coûte une orientation. Garantie structurelle, pas dépendante du prompt.
+    if champ.nom in CHAMPS_CRITIQUES:
+        return None
+
     cle = os.environ.get("GROQ_API_KEY")
     if not cle or not texte or not str(texte).strip() or not champ.options:
         return None
@@ -373,6 +418,11 @@ def extraire_par_llm(champ, texte: str, langue: str = "fr") -> str | None:
         return None
 
     # Garde-fou : la sortie du modèle n'est jamais crue sur parole.
+    if not _corrobore(champ, texte, valeur):
+        if len(REJETS_LLM) < _MAX_REJETS:
+            REJETS_LLM.append({"champ": champ.nom, "brut": texte,
+                               "refuse": valeur, "motif": "non corroboré"})
+        return None
     if valeur in champ.options:
         return valeur
     if valeur is not None and len(REJETS_LLM) < _MAX_REJETS:
