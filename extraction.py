@@ -145,6 +145,20 @@ CLES_PAR_CHAMP = {
     "antecedents":        ["tension", "diabete"],
 }
 
+# Comment combiner les clés d'un champ.
+#
+# « toutes » par défaut : les clés décrivent les morceaux d'une même
+# expression. « poitrine » seul ne dit pas qu'elle fait mal, il faut aussi
+# « douleur ».
+#
+# « au moins une » quand les clés sont des ALTERNATIVES : déclarer une
+# hypertension suffit à répondre oui sur les antécédents, sans diabète.
+# Exiger les deux y produisait un faux négatif sur un signe d'alerte.
+MODE_PAR_DEFAUT = "toutes"
+MODE_CLES = {
+    "antecedents": "au moins une",
+}
+
 
 def extraire_reprise(nom_champ: str, texte: str) -> str | None:
     """Réponse déduite de la reprise des mots de la question. Sans modèle.
@@ -156,8 +170,15 @@ def extraire_reprise(nom_champ: str, texte: str) -> str | None:
     cles = CLES_PAR_CHAMP.get(nom_champ)
     if not cles:
         return None
-    if not all(_detecte(c, texte) for c in cles):
+
+    presentes = [c for c in cles if _detecte(c, texte)]
+    mode = MODE_CLES.get(nom_champ, MODE_PAR_DEFAUT)
+    if mode == "toutes":
+        if len(presentes) < len(cles):
+            return None
+    elif not presentes:
         return None
+
     return "non" if _detecte("non", texte) else "oui"
 
 
@@ -249,7 +270,39 @@ _TRANCHES = [(5, "moins de 5 ans"), (10, "5 a 9 ans"), (15, "10 a 14 ans"),
 _MOTS_AGE = {"un":1,"deux":2,"trois":3,"quatre":4,"cinq":5,"six":6,"sept":7,
              "huit":8,"neuf":9,"dix":10,"vingt":20,"trente":30,"quarante":40,
              "cinquante":50,"soixante":60,
-             "benn":1,"naar":2,"nett":3,"nent":4,"juroom":5}
+             "benn":1,"naar":2,"nett":3,"nent":4,"juroom":5,
+             # Wolof : le lexique doit suffire seul, age_tranche étant un
+             # champ critique désormais privé de secours par modèle.
+             "juroom benn":6, "juroom naar":7, "juroom nett":8,
+             "juroom nent":9,
+             "fukk":10, "fukki":10,
+             "naar fukk":20, "naar fukki":20,
+             "fanweer":30}
+
+# Les formes longues d'abord : « juroom benn » doit l'emporter sur « juroom »,
+# « naar fukk » sur « naar ».
+_MOTS_AGE_TRIES = sorted(_MOTS_AGE.items(), key=lambda kv: -len(kv[0]))
+
+
+def _age_en_lettres(t: str) -> int | None:
+    """Âge écrit en toutes lettres, formes additives comprises.
+
+    « fukki at » vaut 10, « fukki at ak juroom » vaut 10 + 5. Le wolof
+    compose les dizaines et les unités avec « ak ».
+
+    Une unité de temps (at, an, ans) doit figurer quelque part : sans elle,
+    un nombre isolé dans la phrase serait pris pour un âge.
+    """
+    if not re.search(r"\b(ans?|at)\b", t):
+        return None
+
+    total = None
+    for segment in re.split(r"\bak\b", t):
+        for mot, valeur in _MOTS_AGE_TRIES:
+            if re.search(rf"\b{mot}\b", segment):
+                total = valeur if total is None else total + valeur
+                break
+    return total
 
 
 def extraire_age(texte: str, options: list) -> str | None:
@@ -267,10 +320,7 @@ def extraire_age(texte: str, options: list) -> str | None:
     m = re.search(r"\b(\d{1,3})\s*(ans?|at)\b", t) or re.search(r"\b(\d{1,3})\b", t)
     n = int(m.group(1)) if m else None
     if n is None:
-        for mot, val in _MOTS_AGE.items():
-            if re.search(rf"\b{mot}\s+(ans?|at)\b", t):
-                n = val
-                break
+        n = _age_en_lettres(t)
     if n is None:
         return None
     for seuil, label in _TRANCHES:
