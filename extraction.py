@@ -271,6 +271,14 @@ Règles absolues :
 - NE JAMAIS déduire une négation d'un silence. Si le patient ne mentionne pas
   un symptôme, ce n'est PAS un "non" : c'est null. L'absence d'information
   n'est jamais une réponse négative.
+- Chaque question porte sur UN symptôme précis. Si le patient parle d'un AUTRE
+  symptôme, il n'a pas répondu à la question posée : réponds null. Parler du
+  ventre ne dit rien de la respiration. Parler de la tête ne dit rien d'un
+  saignement. Avoir de la fièvre ne dit rien de l'état de conscience.
+  Ne raisonne jamais « il n'en a pas parlé, donc il ne l'a pas ».
+- Cette règle est la plus importante de toutes. Ces questions portent sur des
+  signes d'alerte : un "non" inventé empêche d'orienter un patient qui en a
+  besoin. Dans le doute, null.
 - Ne confonds pas TON incertitude avec celle du patient. Si le patient déclare
   explicitement qu'il ne sait pas ("xamuma", "je ne sais pas", "je ne suis pas
   sûr") et que "je ne sais pas" figure dans les options, choisis cette option :
@@ -293,9 +301,26 @@ Options : ["oui", "non", "je ne sais pas"]
 Patient : "sama yaram tàng na"
 Réponse : {"valeur": "oui"}
 
+Question : Noyyi dafa la jafe ?
+Options : ["oui", "non", "je ne sais pas"]
+Patient : "j'ai du mal à respirer depuis hier"
+Réponse : {"valeur": "oui"}
+
+Le patient parle d'un autre symptôme que celui de la question : null.
+
 Question : Avez-vous de la fièvre ?
 Options : ["oui", "non", "je ne sais pas"]
 Patient : "sama bopp dafa metti"
+Réponse : {"valeur": null}
+
+Question : Noyyi dafa la jafe ?
+Options : ["oui", "non", "je ne sais pas"]
+Patient : "sama biir dafa metti"
+Réponse : {"valeur": null}
+
+Question : Avez-vous un saignement ?
+Options : ["oui", "non", "je ne sais pas"]
+Patient : "dama am tàngaay"
 Réponse : {"valeur": null}"""
 
 

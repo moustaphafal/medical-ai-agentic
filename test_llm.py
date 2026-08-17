@@ -146,12 +146,27 @@ CAS_WOLOF = [
 # Ces cas gardent la règle la plus importante du prompt : une absence
 # d'information n'est jamais une réponse négative. À relancer après toute
 # modification de _INSTRUCTION.
+#
+# Tous portent sur des SIGNES D'ALERTE : un "non" inventé y neutralise une
+# règle de alertes.py et fait perdre une orientation. Un None est toujours
+# acceptable, une valeur inventée ne l'est jamais.
 CAS_SILENCE = [
-    ("fievre",     "sama bopp dafa metti"),          # parle de sa tête
-    ("fievre",     "naka nga def"),                  # salutation, hors sujet
-    ("dyspnee",    "sama biir dafa metti"),          # parle du ventre
-    ("sexe",       "waaw"),                          # « oui » ne dit pas le sexe
+    ("fievre",             "sama bopp dafa metti"),   # parle de sa tête
+    ("fievre",             "naka nga def"),           # salutation, hors sujet
+    ("dyspnee",            "sama biir dafa metti"),   # parle du ventre
+    ("dyspnee",            "j'ai mal a la tete"),
+    ("saignement",         "dama am tangaay"),        # parle de fièvre
+    ("conscience_alteree", "je tousse depuis trois jours"),
+    ("douleur_thoracique", "sama bopp dafay metti"),
+    ("deshydratation",     "j'ai mal au ventre"),
+    ("sexe",               "waaw"),                   # « oui » ne dit pas le sexe
 ]
+
+# Le plafond Groq mesuré est de 6000 tokens/min pour ~940 tokens par appel,
+# soit environ 6 appels par minute. Au-delà, l'API renvoie 429 — et un 429
+# se lit comme un None, donc comme un succès. Sans cette pause, la batterie
+# de silence s'auto-valide à tort.
+PAUSE_DEBIT = 10.0
 
 BUDGET_LATENCE = 2.0        # secondes ; au-delà, on le signale
 
@@ -188,17 +203,6 @@ def qualite_wolof():
             print(f"  ATTENTION : la latence moyenne depasse {BUDGET_LATENCE}s.")
             print("  Budget total 12s par tour, dont ~7s de transcription.")
 
-    print("\n  Regle du silence — une non-reponse ne doit jamais donner 'non' :")
-    for nom_champ, texte in CAS_SILENCE:
-        try:
-            obtenu = extraction.extraire_par_llm(CHAMPS[nom_champ], texte,
-                                                 langue="wo")
-        except Exception as e:
-            print(f"    ERREUR INATTENDUE {nom_champ} <- {texte!r} : {e!r}")
-            continue
-        alerte = "  <-- REGRESSION" if obtenu == "non" else ""
-        print(f"    {nom_champ:12} {texte!r:40} -> {obtenu!r}{alerte}")
-
     if extraction.REJETS_LLM:
         print("\n  Valeurs refusees par le garde-fou :")
         for r in extraction.REJETS_LLM:
@@ -208,6 +212,71 @@ def qualite_wolof():
 
 
 # --------------------------------------------------------------------------
+
+def _appel_observe(nom_champ, texte):
+    """(valeur, disponible). disponible=False si l'API a refusé l'appel.
+
+    Sans cette distinction, un 429 renvoie None et se lit comme un succès :
+    la batterie de silence se validerait elle-même en cas de quota épuisé.
+    """
+    vrai = urllib.request.urlopen
+    incident = {}
+
+    def espion(*a, **k):
+        try:
+            return vrai(*a, **k)
+        except urllib.error.HTTPError as e:
+            incident["x"] = f"HTTP {e.code}"
+            raise
+        except Exception as e:
+            incident["x"] = type(e).__name__
+            raise
+
+    urllib.request.urlopen = espion
+    try:
+        valeur = extraction.extraire_par_llm(CHAMPS[nom_champ], texte,
+                                             langue="wo")
+    finally:
+        urllib.request.urlopen = vrai
+    return valeur, "x" not in incident
+
+
+def regle_du_silence():
+    """Bloquant sur une valeur inventée, tolérant sur une API indisponible.
+
+    Un faux « non » sur un signe d'alerte est un défaut de sécurité.
+    Un quota épuisé n'est pas un défaut du code : on le signale sans échouer.
+    """
+    print("\nRegle du silence — le patient repond a cote (bloquant)")
+    print("-" * 66)
+    print(f"  {len(CAS_SILENCE)} cas, 1 appel / {PAUSE_DEBIT:.0f}s "
+          "pour rester sous le plafond de debit")
+
+    violations, indisponibles = [], 0
+    for nom_champ, texte in CAS_SILENCE:
+        valeur, disponible = _appel_observe(nom_champ, texte)
+        time.sleep(PAUSE_DEBIT)
+
+        if not disponible:
+            indisponibles += 1
+            print(f"    {nom_champ:19} {texte[:30]:32} API indisponible")
+            continue
+
+        if valeur is None:
+            print(f"    {nom_champ:19} {texte[:30]:32} None")
+        else:
+            violations.append(f"{nom_champ} <- {texte!r} a produit {valeur!r}")
+            print(f"    {nom_champ:19} {texte[:30]:32} {valeur!r}"
+                  "  <-- REGRESSION")
+
+    observees = len(CAS_SILENCE) - indisponibles
+    print(f"\n  {len(violations)} valeur(s) inventee(s) sur {observees} "
+          f"observation(s) valide(s)")
+    if indisponibles:
+        print(f"  {indisponibles} appel(s) non aboutis — non comptes, "
+              "ni comme succes ni comme echec")
+    return violations
+
 
 def main():
     print("Surete (bloquant)")
@@ -224,6 +293,12 @@ def main():
 
     if os.environ.get("GROQ_API_KEY"):
         qualite_wolof()
+        violations = regle_du_silence()
+        if violations:
+            echecs += len(violations)
+            print("\nECHEC — une non-reponse a produit une valeur :")
+            for v in violations:
+                print(f"   {v}")
     else:
         print("\nGROQ_API_KEY absente : tests de qualite wolof ignores.")
         print("Le secours par modele est desactive, l'agent relance ses questions.")
