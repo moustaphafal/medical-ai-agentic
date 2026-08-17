@@ -13,6 +13,8 @@ import os
 import subprocess
 import tempfile
 from pathlib import Path
+import os, torch
+torch.set_num_threads(os.cpu_count() or 4)
 
 MODE_SIMULE = os.environ.get("STT_SIMULE", "1") == "1"
 
@@ -48,6 +50,22 @@ def charger_audio(chemin: str):
         wav = librosa.resample(wav, orig_sr=sr, target_sr=16000)
     return wav
 
+def _echauffer():
+    """Première inférence à blanc : initialise les tenseurs.
+    Sans cela, le premier tour réel reste anormalement lent."""
+    import tempfile, wave, os
+    chemin = tempfile.mktemp(suffix=".wav")
+    with wave.open(chemin, "wb") as w:
+        w.setnchannels(1); w.setsampwidth(2); w.setframerate(16000)
+        w.writeframes(b"\x00\x00" * 32000)          # 2 s de silence
+    try:
+        _transcrire_fr(chemin)
+        _transcrire_wo(chemin)
+    except Exception as e:
+        print("[STT] échauffement ignoré :", e)
+    finally:
+        os.unlink(chemin)
+
 
 # --------------------------------------------------------------------------
 # Chargement des modèles — appelé une fois au démarrage de l'API.
@@ -56,12 +74,19 @@ def charger_audio(chemin: str):
 # --------------------------------------------------------------------------
 
 def charger_modeles():
-    """Ne charge plus rien au démarrage : chaque modèle est chargé
-    à sa première utilisation. Évite de saturer la mémoire."""
+    """Précharge les deux modèles au démarrage du serveur.
+    Le premier tour de la démonstration ne paie donc aucun chargement."""
     if MODE_SIMULE:
         print("[STT] mode simulé — aucun modèle chargé")
-    else:
-        print("[STT] chargement paresseux activé")
+        return
+    import time
+    t0 = time.time()
+    print("[STT] préchargement du modèle français…")
+    _get_whisper()
+    print("[STT] préchargement du modèle wolof…")
+    _get_wolof()
+    print(f"[STT] prêt en {time.time() - t0:.0f} s")
+    _echauffer()
 
 
 def _get_whisper():
@@ -118,8 +143,14 @@ def _transcrire_fr(chemin_wav: str) -> str:
     return proc.decode(logits.argmax(-1)[0]).strip() """
 
 def _transcrire_wo(chemin_wav: str) -> str:
-    return _get_wolof()(chemin_wav, chunk_length_s=30)["text"].strip()
-
+    # chunk_length_s=10 : les énoncés font 2 à 15 s, pas 30.
+    # max_new_tokens=48 : empêche Whisper de générer sur du silence.
+    # Mesuré sur Kaggle : 125 s -> 6,4 s, sans perte de qualité.
+    return _get_wolof()(
+        chemin_wav,
+        chunk_length_s=10,
+        generate_kwargs={"max_new_tokens": 48, "num_beams": 1},
+    )["text"].strip()
 
 def transcrire(chemin_audio: str, langue: str = "fr") -> str:
     """Point d'entrée unique. Accepte n'importe quel format audio."""

@@ -1,0 +1,23 @@
+modele,fichier,reference,hypothese,wer,cer,ker,s_gpu
+whisper-small-wolof,a01.wav,sama bopp dafay metti,samag bopp dafay metti,0.25,0.047619047619047616,0.0,0.9516992568969727
+whisper-small-wolof,a02.wav,sama biir dafay metti,sama biir dafay metti,0.0,0.0,0.0,0.9418492317199707
+whisper-small-wolof,a03.wav,sama denn dafay metti,sama dënn dafay metti,0.0,0.0,0.0,0.939854621887207
+whisper-small-wolof,a04.wav,dama am tangaay,dama ame tangaay,0.3333333333333333,0.06666666666666667,0.0,0.9388399124145508
+whisper-small-wolof,a05.wav,yaram bu tang laa am,yaram butang laa am,0.4,0.05,1.0,0.9498810768127441
+whisper-small-wolof,a06.wav,sama yaram dafa tang,sama yaram di fa tang,0.5,0.1,0.0,0.9517581462860107
+whisper-small-wolof,a07.wav,dama seqet bu baxx,damay sëqat bu baax,0.75,0.16666666666666666,1.0,0.9544408321380615
+whisper-small-wolof,a08.wav,dama feebar bu baree,damaa feeba bu bari,0.75,0.2,0.0,0.9542605876922607
+whisper-small-wolof,a09.wav,noyyi bu jafe laa am,noyibu jafe laa ame,0.6,0.15,0.5,0.9459857940673828
+whisper-small-wolof,a10.wav,sama biir dafa daw,sama biir dafa daw,0.0,0.0,0.0,0.9481217861175537
+whisper-small-wolof,a11.wav,sama tank dafa metti,sama tank dafa metti,0.0,0.0,0.0,0.9512176513671875
+whisper-small-wolof,a12.wav,sama put dafa metti,sama put dafa metti,0.0,0.0,0.0,0.9569976329803467
+whisper-small-wolof,a13.wav,dama am palu,dama ame palew,0.6666666666666666,0.25,1.0,0.9489750862121582
+whisper-small-wolof,a14.wav,sama tension dafa kawe,sama tention dafa kawe,0.25,0.045454545454545456,0.0,0.9410159587860107
+whisper-small-wolof,a15.wav,jigeen ju emb laa,jigéen ju ëmb,0.25,0.23529411764705882,0.0,0.9415364265441895
+whisper-small-wolof,a16.wav,dama am diabet,dama am jabet,0.3333333333333333,0.14285714285714285,1.0,0.9458174705505371
+whisper-small-wolof,a17.wav,waaw,waaw,0.0,0.0,0.0,0.9479701519012451
+whisper-small-wolof,a18.wav,deedeet,dëdëd,1.0,0.42857142857142855,0.0,0.9553658962249756
+whisper-small-wolof,a19.wav,naata fan la,ñaata fann la,0.3333333333333333,0.08333333333333333,0.0,0.9487786293029785
+whisper-small-wolof,a20.wav,sama bopp dafa metti,sama bopp day metti,0.25,0.1,0.0,0.9468605518341064
+whisper-small-wolof,a21.wav,damay waccu derett,damay waccul deret,0.6666666666666666,0.1111111111111111,0.0,0.9965918064117432
+whisper-small-wolof,recit.wav,sama bopp dafay metti niari fane yi yeup sama yaram dafa tangg te damay waccu,sama bopp dafay metti ñaari fan yi yépp sama yaram dafa tang te damay waccub,0.3333333333333333,0.06493506493506493,0.0,0.9691267013549805

@@ -21,6 +21,7 @@ import alertes
 import domaine
 import extraction
 import formulaire
+import recit
 
 # États
 ACCUEIL = "accueil"
@@ -71,6 +72,7 @@ class Session:
         self.champ_courant = None
         self.reprises = 0
         self.tours = 0
+        self.recit_traite = False
         self.trace: list = []
         self.conclusion: dict | None = None
         if localite:
@@ -116,7 +118,7 @@ class Session:
 
         valeur = extraction.extraire(champ, texte, self.langue)
         if valeur is None:
-            valeur = extraction.extraire_par_llm(champ, texte)
+            valeur = extraction.extraire_par_llm(champ, texte, self.langue)
 
         if valeur is None:
             self.reprises += 1
@@ -143,19 +145,25 @@ class Session:
         self.reprises = 0
         self._journaliser("champ_rempli", {"champ": champ.nom, "valeur": valeur})
 
-        # Le patient donne souvent plusieurs informations d'un coup.
-        # « j'ai mal à la tête depuis deux jours » remplit motif ET durée.
-        bonus = extraction.extraire_tout(texte, self.dossier, domaine.CHAMPS)
-        for nom, val in bonus.items():
-            self.dossier[nom] = val
-            self._journaliser("champ_deduit", {"champ": nom, "valeur": val})
-
+        # Premier tour : le patient décrit spontanément plusieurs choses.
+        # Un seul appel remplit alors plusieurs champs, et l'entretien
+        # passe d'environ 11 questions à 6 ou 7.
+        # Seuls des champs positifs sont déduits : un signe d'alerte non
+        # mentionné n'est jamais interprété comme absent.
+        if not self.recit_traite:
+            self.recit_traite = True
+            deduits = recit.extraire_recit(texte, domaine.CHAMPS, self.dossier)
+            for nom, val in deduits.items():
+                self.dossier[nom] = val
+                self._journaliser("champ_deduit",
+                                  {"champ": nom, "valeur": val, "source": "recit"})
+        
         # Les alertes urgentes court-circuitent immédiatement l'entretien.
         urgentes = [a for a in alertes.evaluer(self.dossier)
                     if a.niveau == alertes.URGENT]
         if urgentes:
             return self._conclure_orientation(urgentes)
-
+        
         return self._question_suivante()
 
     def _question_suivante(self) -> Tour:

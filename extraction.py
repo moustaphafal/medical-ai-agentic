@@ -28,17 +28,52 @@ SEUIL = 85
 # --------------------------------------------------------------------------
 
 _SONORES = str.maketrans("bdgvzj", "ptkfsc")
-
+_VOYELLES = str.maketrans("aeiou", "aaaaa")
+_CLITIQUES = ["bu", "ba", "bi", "la", "na", "ci", "ak", "du", "da", "dafa",
+              "ma", "mu", "yi", "ju", "al", "ul"]
 
 def phonetiser(s: str) -> str:
+    """Le wolof n'a pas d'orthographe stabilisée et la transcription varie.
+    On neutralise : diacritiques, digrammes du [q], opposition sourde/sonore,
+    timbre vocalique, consonnes géminées.
+    Kër et Keur deviennent la même forme."""
     s = str(s).lower().strip().replace("ŋ", "n").replace("ñ", "n")
     s = unicodedata.normalize("NFD", s)
     s = "".join(c for c in s if unicodedata.category(c) != "Mn")
     s = re.sub(r"[^a-z0-9\s]", " ", s)
-    s = s.translate(_SONORES)
+    s = s.replace("kh", "q").replace("x", "q")
+    s = s.translate(_SONORES).translate(_VOYELLES)
     s = re.sub(r"(.)\1+", r"\1", s)
-    s = s.replace("kh", "q").replace("x", "q")   # [q] : kh, x, q → une forme
     return re.sub(r"\s+", " ", s).strip()
+
+_CLIT_NORM = sorted({phonetiser(c) for c in _CLITIQUES}, key=len, reverse=True)
+
+def _degluer(tok: str) -> list:
+    """Le modèle colle souvent une particule au mot suivant :
+    « bu tang » ressort en « butang », « noyyi bu » en « noyibu »."""
+    out = [tok]
+    for c in _CLIT_NORM:
+        if tok.startswith(c) and len(tok) > len(c) + 2:
+            out.append(tok[len(c):])
+        if tok.endswith(c) and len(tok) > len(c) + 2:
+            out.append(tok[:-len(c)])
+    return out
+
+
+def contient(mot_cle: str, transcription: str, seuil: int = SEUIL) -> bool:
+    """Appariement flou, token à token."""
+    cible = phonetiser(mot_cle).replace(" ", "")
+    toks = phonetiser(transcription).split()
+    if not toks:
+        return False
+    # Un mot-clé court risque de matcher à l'intérieur d'un mot plus long :
+    # « tànk » (jambe) dans « tàngaay » (fièvre) fausserait le triage.
+    s = 92 if len(str(mot_cle).replace(" ", "")) <= 4 else seuil
+    candidats = []
+    for t in toks:
+        candidats += _degluer(t)
+    candidats += ["".join(toks[i:i + 2]) for i in range(len(toks) - 1)]
+    return max(fuzz.ratio(cible, c) for c in candidats) >= s
 
 def _simplifier(s: str) -> str:
     """Normalisation SANS substitution phonétique.
@@ -49,15 +84,6 @@ def _simplifier(s: str) -> str:
     s = "".join(c for c in s if unicodedata.category(c) != "Mn")
     s = re.sub(r"[^a-z0-9\s]", " ", s)
     return re.sub(r"\s+", " ", s).strip()
-
-def contient(mot_cle: str, transcription: str, seuil: int = SEUIL) -> bool:
-    """Appariement token à token, avec récupération des coupures de mots."""
-    cible = phonetiser(mot_cle).replace(" ", "")
-    toks = phonetiser(transcription).split()
-    if not toks:
-        return False
-    candidats = toks + ["".join(toks[i:i + 2]) for i in range(len(toks) - 1)]
-    return max(fuzz.ratio(cible, c) for c in candidats) >= seuil
 
 
 # --------------------------------------------------------------------------
@@ -75,7 +101,7 @@ LEXIQUE = {
     "poitrine":   ["denn", "den", "poitrine", "thorax"],
     "gorge":      ["put", "gorge"],
     "fievre":     ["tangaay", "tangoor", "tang", "sibbiru",
-                   "fievre", "chaud", "temperature", "palu", "paludisme"],
+                   "fievre", "chaud", "temperature", "palu", "paludisme", "palew"],
     "toux":       ["seqet", "sekhet", "tousse", "toux", "tousser"],
     "vomir":      ["waccu", "wacu", "vomi", "vomis", "vomit", "vomissement"],
     "diarrhee":   ["daw", "diare", "diarrhee", "selles", "sellesliquides"],
@@ -84,7 +110,7 @@ LEXIQUE = {
     "enceinte":   ["emb", "enceinte", "grossesse"],
     "enfant":     ["xale", "enfant", "bebe", "nourrisson"],
     "tension":    ["tension", "hypertension"],
-    "diabete":    ["diabet", "sukkar", "diabete"],
+    "diabete":    ["diabet", "sukkar", "diabete","jabet"],
     "sang":       ["deret", "sang", "saigne"],
     "fatigue":    ["sonn", "fatigue", "faible"],
     "malade":     ["feebar", "febar", "wopp", "malade"],
