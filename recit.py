@@ -19,10 +19,9 @@ d'alerte, qui restent posés explicitement, un par un.
 """
 
 import json
-import os
-import urllib.request
 
 import config  # noqa: F401  — charge .env dans os.environ dès l'import
+import llm
 
 # Champs qu'un récit peut renseigner. Volontairement restreint.
 # N'ajoutez JAMAIS ici un champ figurant dans orchestrateur.CHAMPS_CRITIQUES.
@@ -35,9 +34,10 @@ CHAMPS_DEDUCTIBLES = [
     "age_tranche",
 ]
 
-LLM_URL = "https://api.groq.com/openai/v1/chat/completions"
-LLM_MODELE = "llama-3.1-8b-instant"
-UA = "agent-triage-medical/1.0"
+# Modèle et paramètres : voir llm.py, partagé avec extraction.py.
+# Sortie multi-champs et instruction plus longue qu'en extraction : on laisse
+# davantage de place après les tokens de raisonnement.
+MAX_TOKENS = 600
 
 # Champs pour lesquels le modèle a proposé « je ne sais pas » et que le code
 # a refusés. Diagnostic uniquement : mesure ce que le prompt seul ne suffit
@@ -138,8 +138,7 @@ def extraire_recit(texte: str, champs, dossier: dict) -> dict:
     Ne remplit jamais un champ déjà présent dans le dossier.
     Toute valeur hors du domaine du champ est rejetée.
     """
-    cle = os.environ.get("GROQ_API_KEY")
-    if not cle or not texte or len(texte.split()) < 4:
+    if not texte or len(texte.split()) < 4:
         return {}
 
     domaine = {n: v for n, v in _domaine(champs).items() if n not in dossier}
@@ -149,31 +148,9 @@ def extraire_recit(texte: str, champs, dossier: dict) -> dict:
     contenu = (f"Champs à remplir : {json.dumps(domaine, ensure_ascii=False)}\n"
                f'Récit : "{texte}"')
 
-    corps = json.dumps({
-        "model": LLM_MODELE,
-        "messages": [
-            {"role": "system", "content": _INSTRUCTION},
-            {"role": "user", "content": contenu},
-        ],
-        "temperature": 0,
-        "max_tokens": 160,
-        "response_format": {"type": "json_object"},
-    }).encode()
-
-    req = urllib.request.Request(
-        LLM_URL, data=corps,
-        headers={"Authorization": f"Bearer {cle}",
-                 "Content-Type": "application/json",
-                 "User-Agent": UA},
-    )
     try:
-        with urllib.request.urlopen(req, timeout=8) as r:
-            rep = json.loads(r.read())
-        brut = json.loads(rep["choices"][0]["message"]["content"])
-    except Exception:
+        brut = llm.demander_json(_INSTRUCTION, contenu, max_tokens=MAX_TOKENS)
+    except llm.EchecLLM:
         return {}          # panne réseau : l'entretien continue normalement
-
-    if not isinstance(brut, dict):
-        return {}
 
     return valider(brut, champs, dossier)

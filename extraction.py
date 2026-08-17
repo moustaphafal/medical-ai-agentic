@@ -10,13 +10,12 @@ de la question suivante ni de la conclusion — c'est le rôle de l'orchestrateu
 """
 
 import json
-import os
 import re
 import unicodedata
-import urllib.request
 from rapidfuzz import fuzz
 
 import config  # noqa: F401  — charge .env dans os.environ dès l'import
+import llm
 from domaine import CHAMPS_CRITIQUES
 
 SEUIL = 85
@@ -328,10 +327,7 @@ def extraire_age(texte: str, options: list) -> str | None:
             return label
     return "plus de 60 ans"
 
-_GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
-_GROQ_MODELE = "llama-3.1-8b-instant"
-_GROQ_TIMEOUT = 6
-_AGENT = "medical-ai-agentic/1.0 (+https://github.com/moustaphafal/medical-ai-agentic)"
+# Modèle, paramètres et gestion des erreurs : voir llm.py, partagé avec recit.py.
 
 # Valeurs renvoyées par le modèle mais refusées par le garde-fou.
 # Diagnostic uniquement : rien dans le triage ne lit cette liste.
@@ -426,8 +422,7 @@ def extraire_par_llm(champ, texte: str, langue: str = "fr") -> str | None:
     if champ.nom in CHAMPS_CRITIQUES:
         return None
 
-    cle = os.environ.get("GROQ_API_KEY")
-    if not cle or not texte or not str(texte).strip() or not champ.options:
+    if not texte or not str(texte).strip() or not champ.options:
         return None
 
     question = (champ.question_wo if langue == "wo" else champ.question_fr) or champ.question_fr
@@ -438,33 +433,11 @@ def extraire_par_llm(champ, texte: str, langue: str = "fr") -> str | None:
         "Réponse :"
     )
 
-    corps = json.dumps({
-        "model": _GROQ_MODELE,
-        "temperature": 0,
-        "max_tokens": 40,
-        "response_format": {"type": "json_object"},
-        "messages": [
-            {"role": "system", "content": _INSTRUCTION},
-            {"role": "user", "content": demande},
-        ],
-    }).encode("utf-8")
-
-    requete = urllib.request.Request(
-        _GROQ_URL, data=corps, method="POST",
-        headers={"Content-Type": "application/json",
-                 "Authorization": f"Bearer {cle}",
-                 # Sans User-Agent explicite, urllib s'annonce « Python-urllib »
-                 # et le pare-feu de Groq renvoie un 403 (Cloudflare 1010).
-                 "User-Agent": _AGENT},
-    )
-
     try:
-        with urllib.request.urlopen(requete, timeout=_GROQ_TIMEOUT) as reponse:
-            charge = json.loads(reponse.read().decode("utf-8"))
-        contenu = charge["choices"][0]["message"]["content"]
-        valeur = json.loads(contenu).get("valeur")
-    except Exception:
-        # Panne réseau, quota, timeout, JSON malformé : on relance la question.
+        valeur = llm.demander_json(_INSTRUCTION, demande).get("valeur")
+    except llm.EchecLLM:
+        # Clé absente, panne réseau, quota, timeout, JSON malformé :
+        # on relance la question plutôt que de deviner.
         return None
 
     # Garde-fou : la sortie du modèle n'est jamais crue sur parole.

@@ -23,6 +23,8 @@ import urllib.request
 
 import domaine
 import extraction
+import llm
+import recit
 
 CHAMPS = {c.nom: c for c in domaine.CHAMPS}
 
@@ -47,9 +49,16 @@ class _FausseReponse:
 
 
 def _avec_reponse_simulee(contenu, champ, texte="peu importe"):
-    """Exécute extraire_par_llm en simulant ce que renvoie l'API."""
+    """Exécute extraire_par_llm en simulant ce que renvoie l'API.
+
+    Force llm.ACTIF : ces tests valident la chaîne de validation, pas la
+    disponibilité du service. Ils doivent rester significatifs même quand
+    le secours est coupé en production.
+    """
     vrai_urlopen = urllib.request.urlopen
     vraie_cle = os.environ.get("GROQ_API_KEY")
+    vrai_actif = llm.ACTIF
+    llm.ACTIF = True
     os.environ["GROQ_API_KEY"] = "cle-de-test"
 
     def faux_urlopen(*_a, **_k):
@@ -62,6 +71,7 @@ def _avec_reponse_simulee(contenu, champ, texte="peu importe"):
         return extraction.extraire_par_llm(champ, texte)
     finally:
         urllib.request.urlopen = vrai_urlopen
+        llm.ACTIF = vrai_actif
         if vraie_cle is None:
             os.environ.pop("GROQ_API_KEY", None)
         else:
@@ -155,6 +165,31 @@ def test_champ_non_critique_passe():
     return r == "oui", f"attendu 'oui', obtenu {r!r}"
 
 
+def test_interrupteur_coupe_tout():
+    """llm.ACTIF = False doit empêcher tout appel, sans exception."""
+    vrai_actif, vraie_cle = llm.ACTIF, os.environ.get("GROQ_API_KEY")
+    vrai_urlopen = urllib.request.urlopen
+    appels = []
+
+    llm.ACTIF = False
+    os.environ["GROQ_API_KEY"] = "cle-de-test"
+    urllib.request.urlopen = lambda *a, **k: appels.append(1)
+    try:
+        valeur = extraction.extraire_par_llm(CHAMPS["vomissements"], "damay waccu")
+        recolte = recit.extraire_recit("sama bopp dafay metti naari fan yi",
+                                       domaine.CHAMPS, {})
+    finally:
+        urllib.request.urlopen = vrai_urlopen
+        llm.ACTIF = vrai_actif
+        if vraie_cle is None:
+            os.environ.pop("GROQ_API_KEY", None)
+        else:
+            os.environ["GROQ_API_KEY"] = vraie_cle
+
+    ok = valeur is None and recolte == {} and not appels
+    return ok, (f"valeur={valeur!r} recit={recolte!r} appels={len(appels)}")
+
+
 def test_valeur_valide_passe():
     """Contre-épreuve : sans elle, une fonction qui renvoie toujours None
     passerait tous les tests ci-dessus."""
@@ -172,6 +207,7 @@ SURETE = [
     ("Valeur valide                     -> acceptee", test_valeur_valide_passe),
     ("Champs critiques                  -> jamais au LLM", test_champs_critiques_hors_llm),
     ("Champ non critique                -> LLM actif", test_champ_non_critique_passe),
+    ("Interrupteur llm.ACTIF=False      -> aucun appel", test_interrupteur_coupe_tout),
 ]
 
 
@@ -339,7 +375,12 @@ def main():
     print("-" * 66)
     print(f"  {len(SURETE) - echecs}/{len(SURETE)} tests de surete reussis")
 
-    if os.environ.get("GROQ_API_KEY"):
+    if not llm.ACTIF:
+        print(f"\nSecours par modele DESACTIVE (llm.ACTIF = False, "
+              f"modele {llm.MODELE!r}).")
+        print("Aucun candidat ne respecte la regle du silence — voir llm.py.")
+        print("L'agent relance ses questions ; le triage deterministe est intact.")
+    elif os.environ.get("GROQ_API_KEY"):
         qualite_wolof()
         violations = regle_du_silence()
         if violations:
