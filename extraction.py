@@ -28,15 +28,45 @@ SEUIL = 85
 # --------------------------------------------------------------------------
 
 _SONORES = str.maketrans("bdgvzj", "ptkfsc")
-_VOYELLES = str.maketrans("aeiou", "aaaaa")
+
+# NE NEUTRALISE QUE u/o — mesuré le 2026-08-19.
+#
+# La table précédente, str.maketrans("aeiou", "aaaaa"), ramenait toutes les
+# voyelles à « a ». Elle avait été ajoutée pour rattraper la seule paire
+# seqet/seqat, et détruisait au passage l'information de tous les autres
+# mots :
+#
+#     metti  -> mata      bopp   -> pap
+#     fukki  -> faka      juroom -> caram
+#
+# Un mot réduit à son squelette consonantique n'a plus de quoi se
+# distinguer de ses voisins : c'est du hasard qui décide.
+#
+# Trois variantes ont été comparées sur les transcriptions réelles de
+# test_lexique.py, sur demo.py test et sur des paires qui doivent rester
+# distinctes (tànk/tàngaay, put/bopp, biir/bopp, daw/deret, sonn/sang) :
+#
+#   aeiou->a   8/8 reconnaissance, 3/3 faux positifs, 7/7 demo
+#   u->o       idem, ET rattrape 7 variantes u/o sur 7 (tangoor/tangur,
+#              sukkar/sokkar, noyyi/nuyi, wopp/wupp, juroom/jorom,
+#              waccu/wacco, bopp/bupp) sans fusionner aucune paire
+#   aucune     idem, mais 0 variante u/o sur 7
+#
+# u/o retenu : l'alternance est réelle en wolof transcrit et ne crée aucune
+# confusion mesurée. La paire seqet/seqat, elle, est traitée où elle doit
+# l'être — par une variante dans LEXIQUE.
+_VOYELLES = str.maketrans("u", "o")
 _CLITIQUES = ["bu", "ba", "bi", "la", "na", "ci", "ak", "du", "da", "dafa",
               "ma", "mu", "yi", "ju", "al", "ul"]
 
 def phonetiser(s: str) -> str:
     """Le wolof n'a pas d'orthographe stabilisée et la transcription varie.
     On neutralise : diacritiques, digrammes du [q], opposition sourde/sonore,
-    timbre vocalique, consonnes géminées.
-    Kër et Keur deviennent la même forme."""
+    alternance u/o, consonnes géminées.
+    Kër et Keur deviennent la même forme.
+
+    Ce qui est volontairement CONSERVÉ : le timbre des autres voyelles.
+    C'est lui qui sépare metti de matu et bopp de biir — voir _VOYELLES."""
     s = str(s).lower().strip().replace("ŋ", "n").replace("ñ", "n")
     s = unicodedata.normalize("NFD", s)
     s = "".join(c for c in s if unicodedata.category(c) != "Mn")
@@ -102,7 +132,12 @@ LEXIQUE = {
     "gorge":      ["put", "gorge"],
     "fievre":     ["tangaay", "tangoor", "tang", "sibbiru",
                    "fievre", "chaud", "temperature", "palu", "paludisme", "palew"],
-    "toux":       ["seqet", "sekhet", "tousse", "toux", "tousser"],
+    # « seqat » / « sëqat » : formes réellement transcrites. Elles étaient
+    # rattrapées par la neutralisation vocalique de phonetiser(), qui
+    # écrasait AUSSI metti->mata, bopp->pap, fukki->faka. Une variante ici
+    # coûte une ligne ; la table coûtait l'information de tous les mots.
+    "toux":       ["seqet", "seqat", "sekhet", "sekhat",
+                   "tousse", "toux", "tousser"],
     "vomir":      ["waccu", "wacu", "vomi", "vomis", "vomit", "vomissement"],
     "diarrhee":   ["daw", "diare", "diarrhee", "selles", "sellesliquides"],
     "respirer":   ["noyyi", "noyi", "respire", "respirer", "souffle"],
@@ -274,29 +309,100 @@ _MOTS_AGE = {"un":1,"deux":2,"trois":3,"quatre":4,"cinq":5,"six":6,"sept":7,
              # champ critique désormais privé de secours par modèle.
              "juroom benn":6, "juroom naar":7, "juroom nett":8,
              "juroom nent":9,
-             "fukk":10, "fukki":10,
-             "naar fukk":20, "naar fukki":20,
              "fanweer":30}
+#            fukk / fukki (10) ne figurent PAS ici : ils portent un
+#            multiplicateur et sont traités par _dizaines(), plus bas.
 
-# Les formes longues d'abord : « juroom benn » doit l'emporter sur « juroom »,
-# « naar fukk » sur « naar ».
+# Les formes longues d'abord : « juroom benn » doit l'emporter sur « juroom ».
 _MOTS_AGE_TRIES = sorted(_MOTS_AGE.items(), key=lambda kv: -len(kv[0]))
+
+# Le wolof multiplie les dizaines par juxtaposition : « ñaari fukk » = 2 x 10.
+# Ce qui précède « fukk » n'est donc jamais décoratif.
+#
+# « yu naanu » : forme réellement produite par le modèle de transcription
+# pour « ñaari », observée sur « yu ñaanu fukki at ak juróom » (25 ans).
+# Ajoutée parce qu'elle est identifiée avec certitude — pas parce qu'elle
+# ressemble à quelque chose.
+_MULTIPLICATEURS = {
+    "benn": 1,
+    "naar": 2, "naari": 2, "yu naanu": 2,
+    "nett": 3, "netti": 3,
+    "nent": 4, "nenti": 4,
+    "juroom": 5, "juroomi": 5,
+}
+
+# Mots qui peuvent précéder « fukk » sans être un multiplicateur : articles,
+# possessifs, particules verbales, unités de temps. Cette liste est fermée
+# À DESSEIN — tout ce qui n'y figure pas rend le composé indéterminé.
+_AVANT_FUKK_NEUTRE = {
+    "", "at", "an", "ans", "ak", "am", "na", "naa", "la", "laa", "ngi",
+    "sama", "dafa", "dafay", "def", "yi", "bi", "ci", "ma", "maa", "mu",
+    "bu", "de", "ay", "man", "moom", "yu",
+}
+
+# Un composé numérique que l'on ne sait pas lire en entier.
+# Il ne vaut pas « rien » : il vaut « ne réponds pas ».
+_INDETERMINE = object()
+
+_FUKK = ("fukk", "fukki")
+
+
+def _dizaines(mots: list):
+    """Valeur du groupe « [multiplicateur] fukk », s'il y en a un.
+
+    None si le segment ne contient pas de dizaine.
+    _INDETERMINE si un mot inconnu précède « fukk » : c'est peut-être un
+    multiplicateur mal transcrit, et le sauter donnerait 10 au lieu de 20 —
+    un âge plausible, faux, et silencieux. age_tranche étant un champ
+    critique, on préfère faire relancer la question.
+    """
+    for i, mot in enumerate(mots):
+        if mot not in _FUKK:
+            continue
+        precedent = mots[i - 1] if i >= 1 else ""
+        couple = " ".join(mots[i - 2:i]) if i >= 2 else ""
+
+        # Les formes en deux mots d'abord : « yu naanu » avant « naanu ».
+        if couple in _MULTIPLICATEURS:
+            return 10 * _MULTIPLICATEURS[couple]
+        if precedent in _MULTIPLICATEURS:
+            return 10 * _MULTIPLICATEURS[precedent]
+        if precedent in _AVANT_FUKK_NEUTRE:
+            return 10
+        return _INDETERMINE
+    return None
 
 
 def _age_en_lettres(t: str) -> int | None:
-    """Âge écrit en toutes lettres, formes additives comprises.
+    """Âge écrit en toutes lettres, formes additives ET multiplicatives.
 
-    « fukki at » vaut 10, « fukki at ak juroom » vaut 10 + 5. Le wolof
-    compose les dizaines et les unités avec « ak ».
+    Le wolof additionne avec « ak » et multiplie par juxtaposition :
+
+        fukki at                  10
+        fukki at ak juroom        10 + 5
+        ñaari fukki at ak juroom  2 x 10 + 5
 
     Une unité de temps (at, an, ans) doit figurer quelque part : sans elle,
     un nombre isolé dans la phrase serait pris pour un âge.
+
+    Retourne None dès qu'un composé n'est pas lu ENTIÈREMENT. Un total
+    partiel serait la pire des sorties : 15 au lieu de 25 se range dans une
+    tranche, franchit tous les garde-fous et ne se voit nulle part.
     """
     if not re.search(r"\b(ans?|at)\b", t):
         return None
 
     total = None
     for segment in re.split(r"\bak\b", t):
+        mots = segment.split()
+
+        dizaine = _dizaines(mots)
+        if dizaine is _INDETERMINE:
+            return None
+        if dizaine is not None:
+            total = dizaine if total is None else total + dizaine
+            continue
+
         for mot, valeur in _MOTS_AGE_TRIES:
             if re.search(rf"\b{mot}\b", segment):
                 total = valeur if total is None else total + valeur
