@@ -83,14 +83,22 @@ def _avec_reponse_simulee(contenu, champ, texte="peu importe"):
 # --------------------------------------------------------------------------
 
 def test_sans_cle():
-    """Sans GROQ_API_KEY : None, sans exception et sans appel réseau."""
+    """Sans GROQ_API_KEY : None, sans exception et sans appel réseau.
+
+    Force le fournisseur distant : l'invariant porte sur les services à
+    clé. Sans ce cadrage, le test appellerait un modèle local — donc ne
+    testerait plus rien — le jour où le fournisseur par défaut change.
+    """
     vraie_cle = os.environ.pop("GROQ_API_KEY", None)
+    vrai_fournisseur = llm.FOURNISSEUR
+    llm.FOURNISSEUR = "groq"
     try:
         r = extraction.extraire_par_llm(CHAMPS["sexe"], "jigéen laa")
         return r is None, f"attendu None, obtenu {r!r}"
     except Exception as e:
         return False, f"exception levée : {e!r}"
     finally:
+        llm.FOURNISSEUR = vrai_fournisseur
         if vraie_cle is not None:
             os.environ["GROQ_API_KEY"] = vraie_cle
 
@@ -250,7 +258,18 @@ CAS_SILENCE = [
 # soit environ 6 appels par minute. Au-delà, l'API renvoie 429 — et un 429
 # se lit comme un None, donc comme un succès. Sans cette pause, la batterie
 # de silence s'auto-valide à tort.
-PAUSE_DEBIT = 10.0
+#
+# Un fournisseur local n'a pas de plafond de débit : la pause y ajouterait
+# 70 secondes pour rien. On la réserve donc aux services qui demandent une
+# clé d'API, ce qui est exactement le critère « service distant facturé ».
+def _pause_debit() -> float:
+    try:
+        return 10.0 if llm.fournisseur()["cle_env"] else 0.0
+    except llm.EchecLLM:
+        return 10.0
+
+
+PAUSE_DEBIT = _pause_debit()
 
 BUDGET_LATENCE = 2.0        # secondes ; au-delà, on le signale
 
@@ -380,7 +399,7 @@ def main():
               f"modele {llm.MODELE!r}).")
         print("Aucun candidat ne respecte la regle du silence — voir llm.py.")
         print("L'agent relance ses questions ; le triage deterministe est intact.")
-    elif os.environ.get("GROQ_API_KEY"):
+    elif llm.disponible():
         qualite_wolof()
         violations = regle_du_silence()
         if violations:
@@ -389,7 +408,8 @@ def main():
             for v in violations:
                 print(f"   {v}")
     else:
-        print("\nGROQ_API_KEY absente : tests de qualite wolof ignores.")
+        print(f"\nFournisseur {llm.FOURNISSEUR!r} indisponible : "
+              "tests de qualite wolof ignores.")
         print("Le secours par modele est desactive, l'agent relance ses questions.")
 
     return 1 if echecs else 0
